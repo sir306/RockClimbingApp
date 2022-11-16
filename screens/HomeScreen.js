@@ -21,6 +21,11 @@ const HomeScreen = () => {
   // navigation
   const navigation = useNavigation();
 
+  // home function
+  const handleHome = () => {
+    navigation.navigate("Home");
+  };
+
   // logout function
   const handleLogout = () => {
     auth
@@ -39,12 +44,19 @@ const HomeScreen = () => {
         source={backgroundImage}
         style={imageStyle.imageBackground}
       >
-        <View style={containerStyle.logoutContainer}>
+        <View style={containerStyle.menuContainer}>
           <TouchableOpacity
             style={buttonStyle.logoutInput}
             onPress={() => handleLogout()}
           >
             <Text style={buttonStyle.buttonText}>Log Out</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={buttonStyle.menuInput}
+            onPress={() => handleHome()}
+          >
+            <Text style={buttonStyle.buttonText}>Home</Text>
           </TouchableOpacity>
         </View>
         <Text>HomeScreen</Text>

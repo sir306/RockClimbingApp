@@ -20,11 +20,15 @@ module.exports = StyleSheet.create({
   buttonContainer: {
     width: "100%",
   },
-  logoutContainer: {
-    width: "20%",
+  menuContainer: {
+    flexDirection: "row-reverse",
+    justifyContent: "flex-start",
+    top: "0%",
+    right: "0%",
+    position: "absolute",
+    width: "100%",
     alignSelf: "flex-end",
     paddingBottom: 10,
     paddingTop: 10,
-    marginRight: "5%",
   },
 });

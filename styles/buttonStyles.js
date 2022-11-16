@@ -16,12 +16,22 @@ module.exports = StyleSheet.create({
     color: "white",
     fontSize: 15,
   },
-  logoutInput: {
-    width: "100%",
+  menuInput: {
     borderWidth: 3,
     borderRadius: 10,
-    padding: "5%",
-    backgroundColor: "rgba(255, 0, 0, 0.85)",
+    paddingLeft: "3%",
+    paddingRight: "3%",
+    marginRight: "2%",
+    backgroundColor: "rgba(20, 20, 255, 0.65)",
+    borderColor: "rgba(253, 60, 28, 1)",
+  },
+  logoutInput: {
+    borderWidth: 3,
+    borderRadius: 10,
+    paddingLeft: "3%",
+    paddingRight: "3%",
+    marginRight: "2%",
+    backgroundColor: "rgba(255, 0, 0, 0.65)",
     borderColor: "rgba(253, 60, 28, 1)",
   },
 });
