@@ -1,5 +1,4 @@
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
@@ -14,6 +13,13 @@ const LoginScreen = () => {
   // states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // styles
+  const buttonStyle = require("../styles/buttonStyles");
+  const inputStyle = require("../styles/inputStyles");
+  const containerStyle = require("../styles/containerStyles");
+  const imageStyle = require("../styles/imageStyles");
+  const fontStyle = require("../styles/fontStyles");
 
   // navigation
   const navigation = useNavigation();
@@ -43,25 +49,24 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={containerStyle.container}>
       <ImageBackground
         source={require("../assets/loginRegister.jpg")}
         resizeMode="cover"
-        style={styles.image}
+        style={imageStyle.imageBackground}
       >
-        <Text style={styles.title}>Please Login or</Text>
-        <Text style={styles.title}>Register A New Account</Text>
-        <View style={styles.innerContainer}>
-          <View style={styles.inputContainer}>
+        <Text style={fontStyle.title}>Login or register a new account</Text>
+        <View style={containerStyle.innerContainer}>
+          <View style={inputStyle.inputContainer}>
             <TextInput
-              style={styles.textInput}
+              style={inputStyle.textInput}
               placeholder="Enter Your Email.."
               placeholderTextColor={"white"}
               value={email}
               onChangeText={(text) => setEmail(text)}
             />
             <TextInput
-              style={styles.textInput}
+              style={inputStyle.textInput}
               placeholder="Enter Your Password.."
               placeholderTextColor={"white"}
               secureTextEntry
@@ -69,19 +74,18 @@ const LoginScreen = () => {
               onChangeText={(text) => setPassword(text)}
             />
           </View>
-          <View style={styles.buttonContainer}>
+          <View style={containerStyle.buttonContainer}>
             <TouchableOpacity
-              style={styles.buttonInput}
-              onPress={() => handleSignUp()}
-            >
-              <Text style={styles.buttonText}>Register New Account</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.buttonInput}
+              style={buttonStyle.buttonInput}
               onPress={() => handleSignIn()}
             >
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={buttonStyle.buttonText}>Login</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={buttonStyle.buttonInput}
+              onPress={() => handleSignUp()}
+            >
+              <Text style={buttonStyle.buttonText}>Register New Account</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -89,74 +93,5 @@ const LoginScreen = () => {
     </View>
   );
 };
-
-// stylesheet
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "space-between",
-    alignContent: "center",
-    alignItems: "center",
-    margin: "0%",
-    textAlign: "center",
-  },
-  innerContainer: {
-    flex: 0.5,
-    justifyContent: "space-between",
-    alignContent: "center",
-    alignItems: "center",
-    margin: "5%",
-    textAlign: "center",
-  },
-  image: {
-    flex: 1,
-    justifyContent: "center",
-    width: "100%",
-  },
-  buttonContainer: {
-    width: "100%",
-  },
-  buttonInput: {
-    width: "100%",
-    borderWidth: 3,
-    borderRadius: 10,
-    padding: "5%",
-    margin: "1%",
-    backgroundColor: "rgba(20, 20, 255, 0.85)",
-    borderColor: "rgba(253, 60, 28, 1)",
-  },
-  buttonText: {
-    textAlign: "center",
-    fontWeight: "bold",
-    color: "white",
-    fontSize: 15,
-  },
-  inputContainer: {
-    width: "100%",
-    justifyContent: "space-between",
-  },
-  textInput: {
-    width: "100%",
-    textAlign: "center",
-    fontSize: 18,
-    borderWidth: 3,
-    borderRadius: 10,
-    padding: "5%",
-    margin: "1%",
-    backgroundColor: "rgba(20, 20, 255, 0.3)",
-    borderColor: "rgba(253, 60, 28, 0.4)",
-    color: "white",
-  },
-  inputLabel: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-});
 
 export default LoginScreen;

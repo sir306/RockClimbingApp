@@ -4,14 +4,24 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  ImageBackground,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { auth } from "../backend/firebase";
 import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
+  // background image
+  const backgroundImage = require("../assets/homeBackground.jpg");
+  // styles
+  const imageStyle = require("../styles/imageStyles");
+  const containerStyle = require("../styles/containerStyles");
+  const buttonStyle = require("../styles/buttonStyles");
+
+  // navigation
   const navigation = useNavigation();
 
+  // logout function
   const handleLogout = () => {
     auth
       .signOut()
@@ -24,14 +34,21 @@ const HomeScreen = () => {
       });
   };
   return (
-    <View>
-      <Text>HomeScreen</Text>
-      <TouchableOpacity
-        style={styles.buttonInput}
-        onPress={() => handleLogout()}
+    <View style={containerStyle.container}>
+      <ImageBackground
+        source={backgroundImage}
+        style={imageStyle.imageBackground}
       >
-        <Text style={styles.buttonText}>Log Out</Text>
-      </TouchableOpacity>
+        <View style={containerStyle.logoutContainer}>
+          <TouchableOpacity
+            style={buttonStyle.logoutInput}
+            onPress={() => handleLogout()}
+          >
+            <Text style={buttonStyle.buttonText}>Log Out</Text>
+          </TouchableOpacity>
+        </View>
+        <Text>HomeScreen</Text>
+      </ImageBackground>
     </View>
   );
 };
