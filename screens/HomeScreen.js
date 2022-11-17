@@ -7,19 +7,34 @@ import {
   ImageBackground,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { auth } from "../backend/firebase";
+import { auth, db } from "../backend/firebase";
 import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
+  // states
+  const [climbSites, setClimbSites] = useState([]);
+  // navigation
+  const navigation = useNavigation();
+
   // background image
   const backgroundImage = require("../assets/homeBackground.jpg");
+
   // styles
   const imageStyle = require("../styles/imageStyles");
   const containerStyle = require("../styles/containerStyles");
   const buttonStyle = require("../styles/buttonStyles");
 
-  // navigation
-  const navigation = useNavigation();
+  // get database of climb sites
+  useEffect(() => {
+    db.collection("climbSites")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((snapshot) => {
+          setClimbSites(snapshot.data);
+          console.log(climbSites);
+        });
+      });
+  }, []);
 
   // home function
   const handleHome = () => {
