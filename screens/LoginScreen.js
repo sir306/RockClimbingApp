@@ -4,22 +4,22 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { auth } from "../backend/firebase";
-import { useNavigation } from "@react-navigation/native";
+} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { auth } from '../backend/firebase';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
   // states
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   // styles
-  const buttonStyle = require("../styles/buttonStyles");
-  const inputStyle = require("../styles/inputStyles");
-  const containerStyle = require("../styles/containerStyles");
-  const imageStyle = require("../styles/imageStyles");
-  const fontStyle = require("../styles/fontStyles");
+  const buttonStyle = require('../styles/buttonStyles');
+  const inputStyle = require('../styles/inputStyles');
+  const containerStyle = require('../styles/containerStyles');
+  const imageStyle = require('../styles/imageStyles');
+  const fontStyle = require('../styles/fontStyles');
 
   // navigation
   const navigation = useNavigation();
@@ -27,13 +27,13 @@ const LoginScreen = () => {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        navigation.navigate("Home");
+        navigation.navigate('Home');
       }
     });
   }, []);
 
   const handleSignUp = () => {
-    navigation.navigate("Register");
+    navigation.navigate('Register');
   };
 
   // handle sign in func
@@ -42,8 +42,8 @@ const LoginScreen = () => {
       .signInWithEmailAndPassword(email, password)
       .then((useCredentials) => {
         const user = useCredentials.user;
-        console.log("User register with:", user.email);
-        navigation.navigate("Home");
+        console.log('User register with:', user.email);
+        navigation.navigate('ClimbSites');
       })
       .catch((error) => alert(error.message));
   };
@@ -51,8 +51,8 @@ const LoginScreen = () => {
   return (
     <View style={containerStyle.container}>
       <ImageBackground
-        source={require("../assets/loginRegister.jpg")}
-        resizeMode="cover"
+        source={require('../assets/loginRegister.jpg')}
+        resizeMode='cover'
         style={imageStyle.imageBackground}
       >
         <Text style={fontStyle.title}>Login or register a new account</Text>
@@ -60,15 +60,15 @@ const LoginScreen = () => {
           <View style={inputStyle.inputContainer}>
             <TextInput
               style={inputStyle.textInput}
-              placeholder="Enter Your Email.."
-              placeholderTextColor={"white"}
+              placeholder='Enter Your Email..'
+              placeholderTextColor={'white'}
               value={email}
               onChangeText={(text) => setEmail(text)}
             />
             <TextInput
               style={inputStyle.textInput}
-              placeholder="Enter Your Password.."
-              placeholderTextColor={"white"}
+              placeholder='Enter Your Password..'
+              placeholderTextColor={'white'}
               secureTextEntry
               value={password}
               onChangeText={(text) => setPassword(text)}
