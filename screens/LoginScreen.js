@@ -27,7 +27,7 @@ const LoginScreen = () => {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        navigation.navigate('Home');
+        navigation.navigate('ClimbSites');
       }
     });
   }, []);
@@ -42,7 +42,7 @@ const LoginScreen = () => {
       .signInWithEmailAndPassword(email, password)
       .then((useCredentials) => {
         const user = useCredentials.user;
-        console.log('User register with:', user.email);
+        console.log('User signed in with:', user.email);
         navigation.navigate('ClimbSites');
       })
       .catch((error) => alert(error.message));
@@ -63,7 +63,7 @@ const LoginScreen = () => {
               placeholder='Enter Your Email..'
               placeholderTextColor={'white'}
               value={email}
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={(text) => setEmail(text.trimEnd())}
             />
             <TextInput
               style={inputStyle.textInput}
@@ -71,7 +71,7 @@ const LoginScreen = () => {
               placeholderTextColor={'white'}
               secureTextEntry
               value={password}
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={(text) => setPassword(text.trimEnd())}
             />
           </View>
           <View style={containerStyle.buttonContainer}>

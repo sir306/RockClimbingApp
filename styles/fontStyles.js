@@ -1,14 +1,50 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 module.exports = StyleSheet.create({
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "white",
-    backgroundColor: "rgba(0, 0, 0, .3)",
-    margin: "5%",
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: 'white',
+    backgroundColor: 'rgba(0, 0, 0, .3)',
+    margin: '5%',
     padding: 10,
     borderRadius: 5,
+  },
+  detailTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: 'white',
+    backgroundColor: 'rgba(0, 0, 0, .3)',
+    marginHorizontal: '5%',
+    marginVertical: '0%',
+    padding: 8,
+    paddingBottom: 0,
+    textDecorationLine: 'underline',
+    textDecorationColor: 'white',
+  },
+  details: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: 'white',
+    backgroundColor: 'rgba(0, 0, 0, .3)',
+    marginHorizontal: '5%',
+    marginVertical: '0%',
+    paddingTop: 0,
+    paddingBottom: 8,
+  },
+  checkBox: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: 'white',
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+  },
+  noImageText: {
+    fontSize: 16,
+    color: 'white',
+    alignContent: 'center',
+    width: '90%',
+    marginTop: 20,
   },
 });

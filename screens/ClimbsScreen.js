@@ -11,14 +11,10 @@ import React, { useEffect, useState } from 'react';
 import { auth, db } from '../backend/firebase';
 import { useNavigation } from '@react-navigation/native';
 import Menu from '../components/Menu';
-import ClimbSiteList from '../components/ClimbSiteList';
+import ClimbsList from '../components/ClimbsList';
 
-const ClimbSitesScreen = () => {
-  // states
-
-  // navigation
-  const navigation = useNavigation();
-
+const ClimbsScreen = ({ route }) => {
+  const { id } = route.params;
   // background image
   const backgroundImage = require('../assets/background.jpg');
 
@@ -26,7 +22,6 @@ const ClimbSitesScreen = () => {
   const imageStyle = require('../styles/imageStyles');
   const containerStyle = require('../styles/containerStyles');
   const buttonStyle = require('../styles/buttonStyles');
-  const fontStyle = require('../styles/fontStyles');
 
   return (
     <View style={containerStyle.container}>
@@ -35,11 +30,11 @@ const ClimbSitesScreen = () => {
         style={imageStyle.imageBackground}
       >
         <Menu />
-        <Text style={fontStyle.title}>Climb Sites</Text>
-        <ClimbSiteList />
+        <Text>Climbs for id {id}</Text>
+        <ClimbsList id={id} />
       </ImageBackground>
     </View>
   );
 };
 
-export default ClimbSitesScreen;
+export default ClimbsScreen;
