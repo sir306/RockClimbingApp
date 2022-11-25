@@ -40,4 +40,10 @@ module.exports = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: '5%',
   },
+  scrollStyle: {
+    width: '100%',
+    padding: 0,
+    margin: 0,
+    paddingTop: 50,
+  },
 });

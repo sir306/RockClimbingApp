@@ -6,5 +6,4 @@ module.exports = StyleSheet.create({
     padding: 0,
     margin: 0,
   },
-  
 });

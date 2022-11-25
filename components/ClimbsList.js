@@ -46,6 +46,11 @@ const ClimbsList = (props) => {
     });
   };
 
+  // handle add new climb click
+  const handleAddClimbClick = () => {
+    navigation.navigate('AddClimbScreen');
+  };
+
   return (
     <View style={containerStyle.flatlistContainer}>
       <FlatList
@@ -62,7 +67,10 @@ const ClimbsList = (props) => {
           </TouchableOpacity>
         )}
         ListFooterComponent={
-          <TouchableOpacity style={buttonStyle.buttonInput}>
+          <TouchableOpacity
+            style={buttonStyle.buttonInput}
+            onPress={() => handleAddClimbClick()}
+          >
             <Text style={buttonStyle.buttonText}>Add New Climb</Text>
           </TouchableOpacity>
         }
