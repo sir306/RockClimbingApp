@@ -2,11 +2,12 @@ import { View, Text, ImageBackground } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Menu from '../components/Menu';
 import { CheckBox } from '@rneui/themed';
-import { auth, db } from '../backend/firebase';
+import { auth, db, firebase } from '../backend/firebase';
 
 const ClimbDetailScreen = ({ route }) => {
   //states
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [image, setImage] = useState(null);
   // get data
   const data = route.params;
   // get climb data
@@ -35,6 +36,19 @@ const ClimbDetailScreen = ({ route }) => {
     });
   }, []);
 
+  // get image from firebase storage
+  useEffect(() => {
+    const imageRef = firebase
+      .storage()
+      .ref('/climbPhotos/' + '0a3c629a-207a-4662-aed9-857d4948ea0f.jpeg');
+    imageRef
+      .getDownloadURL()
+      .then((url) => {
+        setImage(url);
+      })
+      .catch((e) => console.log('getting downloadURL of image error => ', e));
+  }, []);
+
   return (
     <View style={containerStyle.container}>
       <ImageBackground
@@ -46,15 +60,19 @@ const ClimbDetailScreen = ({ route }) => {
         <Text style={fontStyle.details}>{climbData.climbSiteName}</Text>
         <Text style={fontStyle.detailTitle}>Climb Name</Text>
         <Text style={fontStyle.details}>{climbData.climbName}</Text>
-        <ImageBackground
-          source={{
-            uri: 'https://firebasestorage.googleapis.com/v0/b/rockclimbingproject-bf50a.appspot.com/o/Screenshot_20221124-030422_Facebook.jpg?alt=media&token=c9b39f0e-71be-4f39-b664-670533edeb70',
-          }}
-          style={imageStyle.imageClimb}
-        ></ImageBackground>
-        <ImageBackground source={noImage} style={imageStyle.imageClimb}>
-          <Text style={fontStyle.noImageText}>No image found</Text>
-        </ImageBackground>
+        {image ? (
+          <ImageBackground
+            source={{
+              uri: image,
+            }}
+            style={imageStyle.imageClimb}
+          ></ImageBackground>
+        ) : (
+          <ImageBackground source={noImage} style={imageStyle.imageClimb}>
+            <Text style={fontStyle.noImageText}>No image found</Text>
+          </ImageBackground>
+        )}
+
         <Text style={fontStyle.detailTitle}>Climb Grade</Text>
         <Text style={fontStyle.details}>{climbData.grade}</Text>
         <Text style={fontStyle.detailTitle}>Climb Type</Text>
@@ -79,6 +97,8 @@ const ClimbDetailScreen = ({ route }) => {
           checked={toggleCheckBox}
           onPress={() => setToggleCheckBox(!toggleCheckBox)}
         />
+        <Text style={fontStyle.detailTitle}>Comments</Text>
+        <Text style={fontStyle.details}>{climbData.comments}</Text>
       </ImageBackground>
     </View>
   );

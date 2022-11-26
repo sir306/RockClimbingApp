@@ -14,7 +14,7 @@ const Menu = () => {
 
   // home function
   const handleHome = () => {
-    navigation.navigate('ClimbSites');
+    navigation.navigate('Climb Sites');
   };
 
   // logout function

@@ -27,7 +27,7 @@ const LoginScreen = () => {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        navigation.navigate('ClimbSites');
+        navigation.navigate('Climb Sites');
       }
     });
   }, []);
@@ -43,7 +43,7 @@ const LoginScreen = () => {
       .then((useCredentials) => {
         const user = useCredentials.user;
         console.log('User signed in with:', user.email);
-        navigation.navigate('ClimbSites');
+        navigation.navigate('Climb Sites');
       })
       .catch((error) => alert(error.message));
   };

@@ -44,6 +44,8 @@ module.exports = StyleSheet.create({
     width: '100%',
     padding: 0,
     margin: 0,
-    paddingTop: 50,
+    marginTop: 50,
+    flexGrow: 1,
+    backgroundColor: 'rgba(0, 0, 0, .3)',
   },
 });

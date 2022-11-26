@@ -41,14 +41,14 @@ const ClimbsList = (props) => {
   const handleClimbSiteClick = (id) => {
     climbs.forEach((climb) => {
       if (climb.id == id) {
-        navigation.navigate('ClimbDetailScreen', { climb });
+        navigation.navigate('Climb Detail', { climb });
       }
     });
   };
 
   // handle add new climb click
-  const handleAddClimbClick = () => {
-    navigation.navigate('AddClimbScreen');
+  const handleAddClimbClick = (id) => {
+    navigation.navigate('Add Climb', { id });
   };
 
   return (
@@ -69,7 +69,7 @@ const ClimbsList = (props) => {
         ListFooterComponent={
           <TouchableOpacity
             style={buttonStyle.buttonInput}
-            onPress={() => handleAddClimbClick()}
+            onPress={() => handleAddClimbClick(id)}
           >
             <Text style={buttonStyle.buttonText}>Add New Climb</Text>
           </TouchableOpacity>

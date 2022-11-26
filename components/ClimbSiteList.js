@@ -34,7 +34,7 @@ const ClimbSiteList = () => {
   const handleClimbSiteClick = (id) => {
     climbSites.forEach((site) => {
       if (site.id == id) {
-        navigation.navigate('ClimbSiteDetailScreen', { site });
+        navigation.navigate('Climb Site Detail', { site });
       }
     });
   };

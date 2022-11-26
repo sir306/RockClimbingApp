@@ -18,14 +18,14 @@ export default function App() {
       <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen name='Login' component={LoginScreen} />
         <Stack.Screen name='Register' component={RegisterScreen} />
-        <Stack.Screen name='ClimbSites' component={ClimbSitesScreen} />
-        <Stack.Screen name='ClimbsScreen' component={ClimbsScreen} />
-        <Stack.Screen name='ClimbDetailScreen' component={ClimbDetailScreen} />
+        <Stack.Screen name='Climb Sites' component={ClimbSitesScreen} />
+        <Stack.Screen name='Climbs' component={ClimbsScreen} />
+        <Stack.Screen name='Climb Detail' component={ClimbDetailScreen} />
         <Stack.Screen
-          name='ClimbSiteDetailScreen'
+          name='Climb Site Detail'
           component={ClimbSiteDetailScreen}
         />
-        <Stack.Screen name='AddClimbScreen' component={AddClimbScreen} />
+        <Stack.Screen name='Add Climb' component={AddClimbScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

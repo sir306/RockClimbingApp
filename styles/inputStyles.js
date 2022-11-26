@@ -16,7 +16,7 @@ module.exports = StyleSheet.create({
     marginTop: '1%',
     marginBottom: '1%',
     backgroundColor: 'rgba(20, 20, 255, 0.3)',
-    borderColor: 'rgba(253, 60, 28, 0.4)',
+    borderColor: 'rgba(253, 60, 28, 1)',
     color: 'white',
   },
 });
