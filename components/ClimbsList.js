@@ -6,8 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 const ClimbsList = (props) => {
   //climb site id
   const id = props.id;
+  //climb site name
   const siteName = props.name;
-
   // states
   const [climbs, setClimbs] = useState([]);
 

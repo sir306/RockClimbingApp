@@ -14,7 +14,7 @@ import Menu from '../components/Menu';
 import ClimbsList from '../components/ClimbsList';
 
 const ClimbsScreen = ({ route }) => {
-  const { id } = route.params;
+  const { id, name } = route.params;
   // background image
   const backgroundImage = require('../assets/background.jpg');
 
@@ -31,7 +31,7 @@ const ClimbsScreen = ({ route }) => {
       >
         <Menu />
         <Text>Climbs for id {id}</Text>
-        <ClimbsList id={id} />
+        <ClimbsList id={id} name={name} />
       </ImageBackground>
     </View>
   );

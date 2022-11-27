@@ -67,9 +67,8 @@ const ClimbSiteDetailScreen = ({ route }) => {
   };
 
   // handle climbs click and navigate to the climb list screen
-  const handleClimbsClick = (id) => {
-    const name = siteData.siteName;
-    navigation.navigate('Climbs', { id, name });
+  const handleClimbsClick = (id, name) => {
+    navigation.navigate('Climbs', { id: id, name: name });
   };
 
   return (
@@ -94,7 +93,7 @@ const ClimbSiteDetailScreen = ({ route }) => {
           <View style={containerStyle.buttonContainer}>
             <TouchableOpacity
               style={buttonStyle.buttonInput}
-              onPress={() => handleClimbsClick(id)}
+              onPress={() => handleClimbsClick(id, siteData.siteName)}
             >
               <Text style={buttonStyle.buttonText}>Climbs</Text>
             </TouchableOpacity>

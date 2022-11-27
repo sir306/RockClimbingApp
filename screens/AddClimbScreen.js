@@ -12,13 +12,14 @@ import { useNavigation } from '@react-navigation/native';
 import Menu from '../components/Menu';
 import React, { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { db, auth, firebase } from '../backend/firebase';
+import { db, auth, firebase, userAdmin } from '../backend/firebase';
 import { CheckBox } from '@rneui/themed';
 
-const AddClimbScreen = (props) => {
+const AddClimbScreen = ({ route }) => {
   // props
-  const climbSiteId = props.route.params.id;
-  const climbSiteName = props.route.params.name;
+  const climbSiteId = route.params.id;
+  const climbSiteName = route.params.siteName;
+
   // states
   const [image, setImage] = useState(null);
   const [filename, setFileName] = useState('');
@@ -36,6 +37,9 @@ const AddClimbScreen = (props) => {
 
   // variables
   let errMsg = 'Form Error:';
+
+  // navigation
+  const navigation = useNavigation();
 
   // styles
   const imageStyle = require('../styles/imageStyles');
@@ -63,42 +67,71 @@ const AddClimbScreen = (props) => {
   };
 
   const submitPhoto = async () => {
-    let id = await auth.currentUser.uid;
+    // reset transfer back to 0
+    setTransfering(0);
+    // get user id
+    let id = auth.currentUser.uid;
     // Create file metadata including the user id
     var metadata = {
       customMetadata: {
         userUpload: id,
       },
     };
-    var ref;
     try {
       const response = await fetch(image);
       const blob = await response.blob();
       let imageName = image.substring(image.lastIndexOf('/') + 1);
       setFileName(imageName);
-      ref = await firebase
-        .storage()
-        .ref('climbPhotos')
-        .child(filename)
-        .put(blob, metadata)
-        .then((snapshot) => {
-          setDownloadURL(snapshot.downloadURL);
-          console.log(downloadURL);
-        });
-      setImage(null);
-      return true;
+      var imageRef = firebase.storage().ref('climbPhotos').child(filename);
+      var task = imageRef.put(blob, metadata);
+
+      task.on(
+        'state_changed',
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setTransfering(progress);
+          console.log('Upload is ' + transfering + '% done');
+        },
+        (error) => {
+          console.log('error occured!!', +error.message);
+          Alert.alert('Server Error', JSON.stringify(error.message));
+          setImage(null);
+          setUploading(false);
+        },
+        () => {
+          imageRef.getDownloadURL().then((url) => {
+            setDownloadURL(url);
+            setImage(null);
+            createClimbDataPack();
+          });
+        }
+      );
     } catch (error) {
       console.log('error occured');
       console.log(error);
       console.log(JSON.stringify(error));
       Alert.alert('Server Error', JSON.stringify(error));
-      return false;
     }
   };
 
-  const uploadClimb = async () => {
-    let imgUrl = await uploadImageToBucket();
-    console.log(imgUrl);
+  // upload the climb image uploaded and data ready to go
+  const uploadClimb = (data) => {
+    console.log(data);
+    db.collection('climbs')
+      .add(data)
+      .then((docRef) => {
+        Alert.alert(
+          'Climb Succesfully Uploaded',
+          data.climbName + ' has been successfully uploaded!',
+          [{text: 'Ok', onPress:()=>{navigation.navigate('Climbs',{})}}]
+        );
+        setUploading(false);
+      })
+      .catch((error) => {
+        Alert.alert('Server Error', JSON.stringify(error));
+        setUploading(false);
+      });
   };
 
   // form submit handle
@@ -115,23 +148,15 @@ const AddClimbScreen = (props) => {
       setUploading(false);
       return;
     } else {
-      let result = await submitPhoto();
-      if (result) {
-        console.log(filename);
-      }
+      await submitPhoto();
     }
-    //
-
-    ///
-
-    setUploading(false);
   };
 
   // create data package for firebase db upload
   const createClimbDataPack = () => {
     let approved = false;
     // check user is admin
-    if (userCheckAdmin) {
+    if (userAdmin(auth.currentUser.uid)) {
       approved = true;
     }
 
@@ -146,17 +171,19 @@ const AddClimbScreen = (props) => {
       comments: comments,
       grade: climbGrade,
       trad: tradClimb,
+      imgUrl: downloadURL,
     };
 
     // check has climbed
     if (hasClimbed) {
       data.climbedClimbers.push(auth.currentUser.uid);
     }
+    // upload completed climb data
+    uploadClimb(data);
   };
 
   // validate all user data returns true if all correct or false if not
   const validateData = async () => {
-    console.log(isNaN(numOfBolts));
     // reset error message list
     errMsg = 'Form Error:';
     // check image
