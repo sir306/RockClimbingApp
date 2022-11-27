@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 const ClimbsList = (props) => {
   //climb site id
   const id = props.id;
+  const siteName = props.name;
 
   // states
   const [climbs, setClimbs] = useState([]);
@@ -48,7 +49,7 @@ const ClimbsList = (props) => {
 
   // handle add new climb click
   const handleAddClimbClick = (id) => {
-    navigation.navigate('Add Climb', { id });
+    navigation.navigate('Add Climb', { id, siteName });
   };
 
   return (

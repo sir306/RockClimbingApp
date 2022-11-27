@@ -68,7 +68,8 @@ const ClimbSiteDetailScreen = ({ route }) => {
 
   // handle climbs click and navigate to the climb list screen
   const handleClimbsClick = (id) => {
-    navigation.navigate('Climbs', { id });
+    const name = siteData.siteName;
+    navigation.navigate('Climbs', { id, name });
   };
 
   return (

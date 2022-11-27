@@ -18,7 +18,7 @@ import { CheckBox } from '@rneui/themed';
 const AddClimbScreen = (props) => {
   // props
   const climbSiteId = props.route.params.id;
-
+  const climbSiteName = props.route.params.name;
   // states
   const [image, setImage] = useState(null);
   const [filename, setFileName] = useState('');
@@ -32,6 +32,7 @@ const AddClimbScreen = (props) => {
   const [hasClimbed, setHasClimbed] = useState(false);
   const [numOfBolts, setNumOfBolts] = useState(0);
   const [comments, setComments] = useState('');
+  const [downloadURL, setDownloadURL] = useState('');
 
   // variables
   let errMsg = 'Form Error:';
@@ -79,7 +80,11 @@ const AddClimbScreen = (props) => {
         .storage()
         .ref('climbPhotos')
         .child(filename)
-        .put(blob, metadata);
+        .put(blob, metadata)
+        .then((snapshot) => {
+          setDownloadURL(snapshot.downloadURL);
+          console.log(downloadURL);
+        });
       setImage(null);
       return true;
     } catch (error) {
@@ -123,7 +128,31 @@ const AddClimbScreen = (props) => {
   };
 
   // create data package for firebase db upload
-  
+  const createClimbDataPack = () => {
+    let approved = false;
+    // check user is admin
+    if (userCheckAdmin) {
+      approved = true;
+    }
+
+    const data = {
+      approved: approved,
+      approxHeight: climbHeight,
+      bolts: numOfBolts,
+      climbName: climbName,
+      climbSiteId: climbSiteId,
+      climbSiteName: climbSiteName,
+      climbedClimbers: [],
+      comments: comments,
+      grade: climbGrade,
+      trad: tradClimb,
+    };
+
+    // check has climbed
+    if (hasClimbed) {
+      data.climbedClimbers.push(auth.currentUser.uid);
+    }
+  };
 
   // validate all user data returns true if all correct or false if not
   const validateData = async () => {
