@@ -8,7 +8,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Menu from '../components/Menu';
 import React, { useEffect, useState } from 'react';
-//import MapView from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 
 const ClimbSiteDetailScreen = ({ route }) => {
   // states
@@ -97,7 +97,25 @@ const ClimbSiteDetailScreen = ({ route }) => {
             <Text selectable={true} style={fontStyle.details}>
               {siteData.location.latitude}, {siteData.location.longitude}
             </Text>
-
+            <MapView
+              style={{ height: 400, width: '100%' }}
+              provider={PROVIDER_GOOGLE}
+              showsUserLocation={true}
+              region={{
+                latitude: siteData.location.latitude,
+                longitude: siteData.location.longitude,
+                latitudeDelta: 0.4,
+                longitudeDelta: 0.5,
+              }}
+            >
+              <Marker
+                key={1}
+                coordinate={{
+                  latitude: siteData.location.latitude,
+                  longitude: siteData.location.longitude,
+                }}
+              />
+            </MapView>
             <View style={containerStyle.buttonContainer}>
               <TouchableOpacity
                 style={buttonStyle.buttonInput}
