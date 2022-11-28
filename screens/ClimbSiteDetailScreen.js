@@ -1,7 +1,14 @@
-import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ImageBackground,
+  ScrollView,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Menu from '../components/Menu';
 import React, { useEffect, useState } from 'react';
+//import MapView from 'react-native-maps';
 
 const ClimbSiteDetailScreen = ({ route }) => {
   // states
@@ -78,27 +85,29 @@ const ClimbSiteDetailScreen = ({ route }) => {
         style={imageStyle.imageBackground}
       >
         <Menu />
+        <ScrollView style={containerStyle.scrollStyle}>
+          <View style={containerStyle.innerContainer}>
+            <Text style={fontStyle.detailTitle}>Climb Site Name</Text>
+            <Text style={fontStyle.details}>{siteData.siteName}</Text>
+            <Text style={fontStyle.detailTitle}>Grade Range</Text>
+            <Text style={fontStyle.details}>{gradeRange}</Text>
+            <Text style={fontStyle.detailTitle}>Climb Types</Text>
+            <Text style={fontStyle.details}>{climbTypes}</Text>
+            <Text style={fontStyle.detailTitle}>Location</Text>
+            <Text selectable={true} style={fontStyle.details}>
+              {siteData.location.latitude}, {siteData.location.longitude}
+            </Text>
 
-        <Text style={fontStyle.detailTitle}>Climb Site Name</Text>
-        <Text style={fontStyle.details}>{siteData.siteName}</Text>
-        <Text style={fontStyle.detailTitle}>Grade Range</Text>
-        <Text style={fontStyle.details}>{gradeRange}</Text>
-        <Text style={fontStyle.detailTitle}>Climb Types</Text>
-        <Text style={fontStyle.details}>{climbTypes}</Text>
-        <Text style={fontStyle.detailTitle}>Location</Text>
-        <Text selectable={true} style={fontStyle.details}>
-          {siteData.location.latitude}, {siteData.location.longitude}
-        </Text>
-        <View style={containerStyle.innerContainer}>
-          <View style={containerStyle.buttonContainer}>
-            <TouchableOpacity
-              style={buttonStyle.buttonInput}
-              onPress={() => handleClimbsClick(id, siteData.siteName)}
-            >
-              <Text style={buttonStyle.buttonText}>Climbs</Text>
-            </TouchableOpacity>
+            <View style={containerStyle.buttonContainer}>
+              <TouchableOpacity
+                style={buttonStyle.buttonInput}
+                onPress={() => handleClimbsClick(id, siteData.siteName)}
+              >
+                <Text style={buttonStyle.buttonText}>Climbs</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </ImageBackground>
     </View>
   );
