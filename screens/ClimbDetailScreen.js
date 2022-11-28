@@ -69,7 +69,7 @@ const ClimbDetailScreen = ({ route }) => {
 
     console.log(id);
     var climbDocRef = db.collection('climbs').doc(id);
-    climbDocRef.update({
+    await climbDocRef.update({
       climbedClimbers: newClimbedClimbers,
     });
     setDisabled(false);
