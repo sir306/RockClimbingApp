@@ -20,6 +20,14 @@ const ClimbsList = (props) => {
   const buttonStyle = require('../styles/buttonStyles');
   const generalStyle = require('../styles/generalStyles');
 
+  // cause rerender on navigate
+  useEffect(() => {
+    const unscribe = navigation.addListener('focus', () => {
+      setClimbs([]);
+    });
+    return unscribe;
+  }, [navigation]);
+
   // get database of climbs from the climbsite id
   useEffect(() => {
     async function fetchData() {
@@ -36,7 +44,7 @@ const ClimbsList = (props) => {
       }
     }
     fetchData();
-  }, []);
+  }, [id, climbs]);
 
   // handle climbsite click
   const handleClimbSiteClick = (id) => {

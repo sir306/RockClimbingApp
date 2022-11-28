@@ -20,6 +20,9 @@ module.exports = StyleSheet.create({
   buttonContainer: {
     width: '100%',
   },
+  scrollInnerContainer: {
+    width: '100%',
+  },
   menuContainer: {
     flexDirection: 'row-reverse',
     justifyContent: 'flex-start',

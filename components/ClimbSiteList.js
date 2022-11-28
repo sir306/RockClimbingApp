@@ -14,6 +14,14 @@ const ClimbSiteList = () => {
   const containerStyle = require('../styles/containerStyles');
   const buttonStyle = require('../styles/buttonStyles');
   const generalStyle = require('../styles/generalStyles');
+  
+  // cause rerender on navigate
+  useEffect(() => {
+    const unscribe = navigation.addListener('focus', () => {
+      setClimbSites([]);
+    });
+    return unscribe;
+  }, [navigation]);
 
   // get database of climb sites
   useEffect(() => {
@@ -28,7 +36,7 @@ const ClimbSiteList = () => {
       });
     }
     fetchData();
-  }, []);
+  }, [climbSites]);
 
   // handle climbsite click
   const handleClimbSiteClick = (id) => {

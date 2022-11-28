@@ -22,7 +22,6 @@ const AddClimbScreen = ({ route }) => {
 
   // states
   const [image, setImage] = useState(null);
-  const [filename, setFileName] = useState('');
   const [uploading, setUploading] = useState(false);
   const [transfering, setTransfering] = useState(0);
   const [climbName, setClimbName] = useState('');
@@ -33,7 +32,6 @@ const AddClimbScreen = ({ route }) => {
   const [hasClimbed, setHasClimbed] = useState(false);
   const [numOfBolts, setNumOfBolts] = useState(0);
   const [comments, setComments] = useState('');
-  const [downloadURL, setDownloadURL] = useState('');
 
   // variables
   let errMsg = 'Form Error:';
@@ -66,6 +64,7 @@ const AddClimbScreen = ({ route }) => {
     }
   };
 
+  // upload image to firebase storage
   const submitPhoto = async () => {
     // reset transfer back to 0
     setTransfering(0);
@@ -81,8 +80,7 @@ const AddClimbScreen = ({ route }) => {
       const response = await fetch(image);
       const blob = await response.blob();
       let imageName = image.substring(image.lastIndexOf('/') + 1);
-      setFileName(imageName);
-      var imageRef = firebase.storage().ref('climbPhotos').child(filename);
+      var imageRef = firebase.storage().ref('climbPhotos').child(imageName);
       var task = imageRef.put(blob, metadata);
 
       task.on(
@@ -91,19 +89,18 @@ const AddClimbScreen = ({ route }) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           setTransfering(progress);
-          console.log('Upload is ' + transfering + '% done');
+          console.log('Upload is ' + progress + '% done');
         },
         (error) => {
           console.log('error occured!!', +error.message);
           Alert.alert('Server Error', JSON.stringify(error.message));
-          setImage(null);
           setUploading(false);
+          setImage(null);
         },
         () => {
           imageRef.getDownloadURL().then((url) => {
-            setDownloadURL(url);
             setImage(null);
-            createClimbDataPack();
+            createClimbDataPack(url);
           });
         }
       );
@@ -117,14 +114,23 @@ const AddClimbScreen = ({ route }) => {
 
   // upload the climb image uploaded and data ready to go
   const uploadClimb = (data) => {
-    console.log(data);
     db.collection('climbs')
       .add(data)
       .then((docRef) => {
         Alert.alert(
           'Climb Succesfully Uploaded',
           data.climbName + ' has been successfully uploaded!',
-          [{text: 'Ok', onPress:()=>{navigation.navigate('Climbs',{})}}]
+          [
+            {
+              text: 'Ok',
+              onPress: () => {
+                navigation.navigate('Climbs', {
+                  id: climbSiteId,
+                  name: climbSiteName,
+                });
+              },
+            },
+          ]
         );
         setUploading(false);
       })
@@ -153,7 +159,7 @@ const AddClimbScreen = ({ route }) => {
   };
 
   // create data package for firebase db upload
-  const createClimbDataPack = () => {
+  const createClimbDataPack = (url) => {
     let approved = false;
     // check user is admin
     if (userAdmin(auth.currentUser.uid)) {
@@ -171,7 +177,7 @@ const AddClimbScreen = ({ route }) => {
       comments: comments,
       grade: climbGrade,
       trad: tradClimb,
-      imgUrl: downloadURL,
+      imgUrl: url,
     };
 
     // check has climbed
@@ -246,7 +252,13 @@ const AddClimbScreen = ({ route }) => {
           <View style={containerStyle.innerContainer}>
             <View style={containerStyle.buttonContainer}>
               {image && (
-                <Image source={{ uri: image }} style={imageStyle.uploadImage} />
+                <>
+                  <Text style={fontStyle.detailTitle}>Climb Photo</Text>
+                  <Image
+                    source={{ uri: image }}
+                    style={imageStyle.uploadImage}
+                  />
+                </>
               )}
               {image ? (
                 <TouchableOpacity
@@ -267,7 +279,7 @@ const AddClimbScreen = ({ route }) => {
                   </Text>
                 </TouchableOpacity>
               )}
-
+              <Text style={fontStyle.detailTitle}>Climb Name</Text>
               <TextInput
                 style={inputStyle.textInput}
                 autoCapitalize='words'
@@ -276,6 +288,7 @@ const AddClimbScreen = ({ route }) => {
                 value={climbName}
                 onChangeText={(text) => setClimbName(text)}
               />
+              <Text style={fontStyle.detailTitle}>Climb Grade</Text>
               <TextInput
                 style={inputStyle.textInput}
                 placeholder='Enter Climb Grade..'
@@ -284,6 +297,7 @@ const AddClimbScreen = ({ route }) => {
                 value={climbGrade}
                 onChangeText={(text) => setClimbGrade(Number(text))}
               />
+              <Text style={fontStyle.detailTitle}>Climb Height</Text>
               <TextInput
                 style={inputStyle.textInput}
                 placeholder='Enter Climb Height In Meters..'
@@ -292,6 +306,7 @@ const AddClimbScreen = ({ route }) => {
                 value={climbHeight}
                 onChangeText={(text) => setClimbHeight(Number(text))}
               />
+
               <CheckBox
                 containerStyle={{
                   backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -332,17 +347,23 @@ const AddClimbScreen = ({ route }) => {
                 onPress={() => setHasBolts(!hasBolts)}
               />
               {hasBolts ? (
-                <TextInput
-                  style={inputStyle.textInput}
-                  placeholder='Number Of Bolts..'
-                  keyboardType='numeric'
-                  placeholderTextColor={'white'}
-                  value={numOfBolts}
-                  onChangeText={(text) => setNumOfBolts(Number(text))}
-                />
+                <>
+                  <Text style={fontStyle.detailTitle}>
+                    Number of Bolt Placements
+                  </Text>
+                  <TextInput
+                    style={inputStyle.textInput}
+                    placeholder='Number Of Bolts..'
+                    keyboardType='numeric'
+                    placeholderTextColor={'white'}
+                    value={numOfBolts}
+                    onChangeText={(text) => setNumOfBolts(Number(text))}
+                  />
+                </>
               ) : (
                 <></>
               )}
+              <Text style={fontStyle.detailTitle}>Climb Comments</Text>
               <TextInput
                 style={inputStyle.textInput}
                 placeholder='Climb Comments?'
