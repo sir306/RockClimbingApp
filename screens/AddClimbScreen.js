@@ -117,22 +117,28 @@ const AddClimbScreen = ({ route }) => {
     db.collection('climbs')
       .add(data)
       .then((docRef) => {
-        Alert.alert(
-          'Climb Succesfully Uploaded',
-          data.climbName + ' has been successfully uploaded!',
-          [
-            {
-              text: 'Ok',
-              onPress: () => {
-                navigation.navigate('Climbs', {
-                  id: climbSiteId,
-                  name: climbSiteName,
-                });
+        // if user is not admin then they cant update climb site so done
+        if (!userAdmin(auth.currentUser.uid)) {
+          Alert.alert(
+            'Climb Succesfully Uploaded',
+            data.climbName + ' has been successfully uploaded!',
+            [
+              {
+                text: 'Ok',
+                onPress: () => {
+                  navigation.navigate('Climbs', {
+                    id: climbSiteId,
+                    name: climbSiteName,
+                  });
+                },
               },
-            },
-          ]
-        );
-        setUploading(false);
+            ]
+          );
+          setUploading(false);
+        } else {
+          // user is admin update climbsite data
+          updateClimbSites();
+        }
       })
       .catch((error) => {
         Alert.alert('Server Error', JSON.stringify(error));
@@ -158,6 +164,100 @@ const AddClimbScreen = ({ route }) => {
     }
   };
 
+  /** TODO update grade range and implement with approval button for climbs **/
+
+  // check and update climb site if grade range and climbTypes needs
+  // updating
+  const updateClimbSites = async () => {
+    const climbSiteDoc = await db
+      .collection('climbSites')
+      .doc(climbSiteId)
+      .get();
+    let noMatch = true;
+    // loop through to find a match
+    // if noMatch is set to false then a match has been found and no need to
+    // proceed
+
+    climbSiteDoc.data().climbTypes.forEach((type) => {
+      // mixed climb
+      if (hasBolts && tradClimb && noMatch) {
+        if (type == 'Mixed') {
+          noMatch = false;
+        }
+      }
+      // trad climb
+      else if (tradClimb && !hasBolts && noMatch) {
+        if (type == 'Traditional') {
+          noMatch = false;
+        }
+      }
+      // sports climb
+      else if (hasBolts && !tradClimb && noMatch) {
+        if (type == 'Sports') {
+          noMatch = false;
+        }
+      }
+    });
+    // if noMatch is still true then this climb type does not exist yet
+    if (noMatch) {
+      let climbTypeData = climbSiteDoc.data().climbTypes;
+      // mixed climb
+      if (hasBolts && tradClimb) {
+        climbTypeData.push('Mixed');
+      }
+      // trad climb
+      else if (tradClimb && !hasBolts) {
+        climbTypeData.push('Traditional');
+      }
+      // sports climb
+      else if (hasBolts && !tradClimb) {
+        climbTypeData.push('Sports');
+      }
+      db.collection('climbSites')
+        .doc(climbSiteId)
+        .update({ climbTypes: climbTypeData })
+        .then(() => {
+          Alert.alert(
+            'Climb Succesfully Uploaded',
+            climbName + ' has been successfully uploaded!',
+            [
+              {
+                text: 'Ok',
+                onPress: () => {
+                  navigation.navigate('Climbs', {
+                    id: climbSiteId,
+                    name: climbSiteName,
+                  });
+                },
+              },
+            ]
+          );
+          setUploading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setUploading(false);
+        });
+    } else {
+      Alert.alert(
+        'Climb Succesfully Uploaded',
+        climbName + ' has been successfully uploaded!',
+        [
+          {
+            text: 'Ok',
+            onPress: () => {
+              navigation.navigate('Climbs', {
+                id: climbSiteId,
+                name: climbSiteName,
+              });
+            },
+          },
+        ]
+      );
+      setUploading(false);
+    }
+  };
+
   // create data package for firebase db upload
   const createClimbDataPack = (url) => {
     let approved = false;
@@ -170,7 +270,7 @@ const AddClimbScreen = ({ route }) => {
       approved: approved,
       approxHeight: climbHeight,
       bolts: numOfBolts,
-      climbName: climbName,
+      climbName: climbName.trimEnd(),
       climbSiteId: climbSiteId,
       climbSiteName: climbSiteName,
       climbedClimbers: [],

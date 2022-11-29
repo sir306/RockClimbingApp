@@ -12,6 +12,17 @@ module.exports = StyleSheet.create({
     backgroundColor: 'rgba(20, 20, 255, 0.85)',
     borderColor: 'rgba(253, 60, 28, 1)',
   },
+  buttonInputApprovalPending: {
+    width: '100%',
+    borderWidth: 2,
+    borderRadius: 10,
+    padding: '5%',
+    margin: '0%',
+    marginTop: '1%',
+    marginBottom: '1%',
+    backgroundColor: 'rgba(1, 1, 1, 0.85)',
+    borderColor: 'rgba(253, 60, 28, 1)',
+  },
   buttonText: {
     textAlign: 'center',
     fontWeight: 'bold',

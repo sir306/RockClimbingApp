@@ -18,6 +18,7 @@ const ClimbSiteDetailScreen = ({ route }) => {
   // navigation
   const navigation = useNavigation();
 
+  /* TODO turn into useEffect to get any updated data */
   // get data
   const data = route.params;
   // get site data
@@ -30,6 +31,7 @@ const ClimbSiteDetailScreen = ({ route }) => {
   const containerStyle = require('../styles/containerStyles');
   const buttonStyle = require('../styles/buttonStyles');
   const fontStyle = require('../styles/fontStyles');
+  const mapStyle = require('../styles/mapStyles');
 
   // background image
   const backgroundImage = require('../assets/background.jpg');
@@ -98,7 +100,7 @@ const ClimbSiteDetailScreen = ({ route }) => {
               {siteData.location.latitude}, {siteData.location.longitude}
             </Text>
             <MapView
-              style={{ height: 400, width: '100%' }}
+              style={mapStyle.mapStyle}
               provider={PROVIDER_GOOGLE}
               showsUserLocation={true}
               region={{

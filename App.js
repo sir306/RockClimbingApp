@@ -9,10 +9,10 @@ import ClimbsScreen from './screens/ClimbsScreen';
 import ClimbDetailScreen from './screens/ClimbDetailScreen';
 import ClimbSiteDetailScreen from './screens/ClimbSiteDetailScreen';
 import AddClimbScreen from './screens/AddClimbScreen';
+import AddClimbSiteScreen from './screens/AddClimbSiteScreen';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
-
 
   return (
     <NavigationContainer>
@@ -27,6 +27,7 @@ export default function App() {
           component={ClimbSiteDetailScreen}
         />
         <Stack.Screen name='Add Climb' component={AddClimbScreen} />
+        <Stack.Screen name='Add Climb Site' component={AddClimbSiteScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -21,7 +21,7 @@ const ClimbsScreen = ({ route }) => {
   // styles
   const imageStyle = require('../styles/imageStyles');
   const containerStyle = require('../styles/containerStyles');
-  const buttonStyle = require('../styles/buttonStyles');
+  const fontStyle = require('../styles/fontStyles');
 
   return (
     <View style={containerStyle.container}>
@@ -30,7 +30,7 @@ const ClimbsScreen = ({ route }) => {
         style={imageStyle.imageBackground}
       >
         <Menu />
-        <Text>Climbs for id {id}</Text>
+        <Text style={fontStyle.title}>Climbs for {name}</Text>
         <ClimbsList id={id} name={name} />
       </ImageBackground>
     </View>

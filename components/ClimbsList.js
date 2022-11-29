@@ -1,6 +1,6 @@
 import { Text, View, FlatList, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { db } from '../backend/firebase';
+import { auth, db, userAdmin } from '../backend/firebase';
 import { useNavigation } from '@react-navigation/native';
 
 const ClimbsList = (props) => {
@@ -10,6 +10,7 @@ const ClimbsList = (props) => {
   const siteName = props.name;
   // states
   const [climbs, setClimbs] = useState([]);
+  const [loadData, setLoadData] = useState(true);
 
   // navigation
   const navigation = useNavigation();
@@ -24,6 +25,7 @@ const ClimbsList = (props) => {
   useEffect(() => {
     const unscribe = navigation.addListener('focus', () => {
       setClimbs([]);
+      setLoadData(true);
     });
     return unscribe;
   }, [navigation]);
@@ -33,18 +35,28 @@ const ClimbsList = (props) => {
     async function fetchData() {
       const climbsCol = db.collection('climbs');
       const snapshot = await climbsCol.where('climbSiteId', '==', id).get();
+      let approved = await userAdmin(auth.currentUser.uid);
       if (snapshot.empty) {
         console.log('No matching documents.');
       } else {
         const climbDocs = [];
         snapshot.forEach((doc) => {
-          climbDocs.push({ id: doc.id, data: doc.data() });
+          if (approved) {
+            climbDocs.push({ id: doc.id, data: doc.data() });
+          } else {
+            if (doc.data().approved == true) {
+              climbDocs.push({ id: doc.id, data: doc.data() });
+            }
+          }
         });
         setClimbs(climbDocs);
+        setLoadData(false);
       }
     }
-    fetchData();
-  }, [id, climbs]);
+    if (loadData) {
+      fetchData();
+    }
+  }, [loadData, climbs]);
 
   // handle climbsite click
   const handleClimbSiteClick = (id) => {
@@ -67,14 +79,23 @@ const ClimbsList = (props) => {
         data={climbs}
         numColumns={1}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={buttonStyle.buttonInput}
-            onPress={() => handleClimbSiteClick(item.id)}
-          >
-            <Text style={buttonStyle.buttonText}>{item.data.climbName}</Text>
-          </TouchableOpacity>
-        )}
+        renderItem={({ item }) =>
+          item.data.approved ? (
+            <TouchableOpacity
+              style={buttonStyle.buttonInput}
+              onPress={() => handleClimbSiteClick(item.id)}
+            >
+              <Text style={buttonStyle.buttonText}>{item.data.climbName}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={buttonStyle.buttonInputApprovalPending}
+              onPress={() => handleClimbSiteClick(item.id)}
+            >
+              <Text style={buttonStyle.buttonText}>{item.data.climbName}</Text>
+            </TouchableOpacity>
+          )
+        }
         ListFooterComponent={
           <TouchableOpacity
             style={buttonStyle.buttonInput}

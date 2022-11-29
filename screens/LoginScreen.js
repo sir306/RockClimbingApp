@@ -24,6 +24,15 @@ const LoginScreen = () => {
   // navigation
   const navigation = useNavigation();
 
+  // cause rerender on navigate
+  useEffect(() => {
+    const unscribe = navigation.addListener('focus', () => {
+      setEmail('');
+      setPassword('');
+    });
+    return unscribe;
+  }, [navigation]);
+
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {

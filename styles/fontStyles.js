@@ -47,4 +47,14 @@ module.exports = StyleSheet.create({
     width: '90%',
     marginTop: 20,
   },
+  hintText: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: 'white',
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    marginHorizontal: '5%',
+    marginVertical: '0%',
+    paddingTop: 0,
+    paddingBottom: 8,
+  },
 });
