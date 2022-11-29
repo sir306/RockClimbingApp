@@ -13,6 +13,7 @@ import AddClimbScreen from './screens/AddClimbScreen';
 export default function App() {
   const Stack = createNativeStackNavigator();
 
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Login'>

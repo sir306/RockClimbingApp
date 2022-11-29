@@ -55,7 +55,7 @@ const LoginScreen = () => {
         resizeMode='cover'
         style={imageStyle.imageBackground}
       >
-        <Text style={fontStyle.title}>Login or register a new account</Text>
+        <Text style={fontStyle.title}>Login</Text>
         <View style={containerStyle.innerContainer}>
           <View style={inputStyle.inputContainer}>
             <TextInput
@@ -85,7 +85,7 @@ const LoginScreen = () => {
               style={buttonStyle.buttonInput}
               onPress={() => handleSignUp()}
             >
-              <Text style={buttonStyle.buttonText}>Register New Account</Text>
+              <Text style={buttonStyle.buttonText}>Register A New Account</Text>
             </TouchableOpacity>
           </View>
         </View>
