@@ -173,49 +173,93 @@ const AddClimbScreen = ({ route }) => {
       .collection('climbSites')
       .doc(climbSiteId)
       .get();
-    let noMatch = true;
+    let noMatchType = true; // bool for checking climbTypes
+    let updateGradeRange = false; // bool for checking gradeRange
     // loop through to find a match
     // if noMatch is set to false then a match has been found and no need to
     // proceed
 
+    // loop and check climb types
     climbSiteDoc.data().climbTypes.forEach((type) => {
       // mixed climb
-      if (hasBolts && tradClimb && noMatch) {
+      if (hasBolts && tradClimb && noMatchType) {
         if (type == 'Mixed') {
-          noMatch = false;
+          noMatchType = false;
         }
       }
       // trad climb
-      else if (tradClimb && !hasBolts && noMatch) {
+      else if (tradClimb && !hasBolts && noMatchType) {
         if (type == 'Traditional') {
-          noMatch = false;
+          noMatchType = false;
         }
       }
       // sports climb
-      else if (hasBolts && !tradClimb && noMatch) {
+      else if (hasBolts && !tradClimb && noMatchType) {
         if (type == 'Sports') {
-          noMatch = false;
+          noMatchType = false;
         }
       }
     });
-    // if noMatch is still true then this climb type does not exist yet
-    if (noMatch) {
+    let gradeRange = climbSiteDoc.data().gradeRange;
+    // switch check range
+    switch (gradeRange.length) {
+      case 0:
+        // if gradeRange length is 0 then no climbs with range so update
+        gradeRange.push(climbGrade);
+        updateGradeRange = true;
+        break;
+      case 1:
+        // only one so check to see if less or greater than value
+        // if less than new value push new value
+        if (gradeRange[0] < climbGrade) {
+          gradeRange.push(climbGrade);
+          updateGradeRange = true;
+        }
+        // if gradeRange is greater then climbGrade goes first
+        if (gradeRange[0] > climbGrade) {
+          var newArray = [climbGrade, gradeRange[0]];
+          gradeRange = newArray;
+          updateGradeRange = true;
+        }
+        break;
+      case 2:
+        // has two values so need to check if gradeRange[0] is bigger than the new value
+        // or check that gradeRange[1] is smaller than the new value
+        // check first value is bigger than new value
+        if (gradeRange[0] > climbGrade) {
+          var newArray = [climbGrade, gradeRange[1]];
+          gradeRange = newArray;
+          updateGradeRange = true;
+        }
+        // check last value if smaller than new value
+        if (gradeRange[1] < climbGrade) {
+          var newArray = [gradeRange[0], climbGrade];
+          gradeRange = newArray;
+          updateGradeRange = true;
+        }
+        break;
+      default:
+        break;
+    }
+
+    // if noMatch is still true  or updateGradeRange is true then update is required
+    if (noMatchType || updateGradeRange) {
       let climbTypeData = climbSiteDoc.data().climbTypes;
       // mixed climb
-      if (hasBolts && tradClimb) {
+      if (hasBolts && tradClimb && noMatchType) {
         climbTypeData.push('Mixed');
       }
       // trad climb
-      else if (tradClimb && !hasBolts) {
+      else if (tradClimb && !hasBolts && noMatchType) {
         climbTypeData.push('Traditional');
       }
       // sports climb
-      else if (hasBolts && !tradClimb) {
+      else if (hasBolts && !tradClimb && noMatchType) {
         climbTypeData.push('Sports');
       }
       db.collection('climbSites')
         .doc(climbSiteId)
-        .update({ climbTypes: climbTypeData })
+        .update({ climbTypes: climbTypeData, gradeRange: gradeRange })
         .then(() => {
           Alert.alert(
             'Climb Succesfully Uploaded',
