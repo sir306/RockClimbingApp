@@ -51,4 +51,15 @@ module.exports = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: 'rgba(0, 0, 0, .3)',
   },
+  loadingContainer: {
+    padding: 20,
+    width: 'auto',
+    height: 'auto',
+    alignContent: 'center',
+    alignItems: 'center',
+    margin: '5%',
+    textAlign: 'center',
+    backgroundColor: 'rgba(1, 1, 1, 0.5)',
+    borderRadius: 10,
+  },
 });

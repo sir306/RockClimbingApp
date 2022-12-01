@@ -66,7 +66,7 @@ const ApprovalButton = (params) => {
             }
           }
         });
-        console.log('after loop');
+
         let gradeRange = climbSiteDocData.gradeRange;
         // switch check range
         switch (gradeRange.length) {
@@ -108,7 +108,6 @@ const ApprovalButton = (params) => {
           default:
             break;
         }
-        console.log('after switch');
         console.log(climbSiteDocData);
         // if noMatch is still true  or updateGradeRange is true then update is required
         if (noMatchType || updateGradeRange) {
@@ -125,7 +124,6 @@ const ApprovalButton = (params) => {
           else if (hasBolts && !tradClimb && noMatchType) {
             climbTypeData.push('Sports');
           }
-          console.log('before climbsite update');
           // update climbsites then update climb approved
           db.collection('climbSites')
             .doc(climbSiteId)
@@ -135,7 +133,6 @@ const ApprovalButton = (params) => {
               setUploading(false);
             })
             .then(() => {
-              console.log('before climb approval');
               approveClimb();
             });
         } else {
@@ -151,11 +148,7 @@ const ApprovalButton = (params) => {
     climbSiteDoc
       .update({ approved: true })
       .then(() => {
-        let text = isClimbSite ? 'Climb Site' : 'Climb';
-        Alert.alert(
-          'Successfully Approved',
-          'The ' + { text } + ' is now approved'
-        );
+        Alert.alert('Successfully Approved', 'The Climb Site is now approved');
         setUploading(false);
       })
       .catch((error) => {

@@ -2,6 +2,7 @@ import { Text, View, FlatList, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { auth, db, userAdmin } from '../backend/firebase';
 import { useNavigation } from '@react-navigation/native';
+import * as Progress from 'react-native-progress';
 
 const ClimbsList = (props) => {
   //climb site id
@@ -20,6 +21,7 @@ const ClimbsList = (props) => {
   const containerStyle = require('../styles/containerStyles');
   const buttonStyle = require('../styles/buttonStyles');
   const generalStyle = require('../styles/generalStyles');
+  const fontStyle = require('../styles/fontStyles');
 
   // cause rerender on navigate
   useEffect(() => {
@@ -33,12 +35,12 @@ const ClimbsList = (props) => {
   // get database of climbs from the climbsite id
   useEffect(() => {
     async function fetchData() {
-      const climbsCol = db.collection('climbs');
-      const snapshot = await climbsCol.where('climbSiteId', '==', id).get();
       let approved = await userAdmin(auth.currentUser.uid);
-      if (snapshot.empty) {
-        console.log('No matching documents.');
-      } else {
+      const climbsCol = db
+        .collection('climbs')
+        .orderBy('climbName')
+        .where('climbSiteId', '==', id);
+      var unsubscribe = climbsCol.onSnapshot((snapshot) => {
         const climbDocs = [];
         snapshot.forEach((doc) => {
           if (approved) {
@@ -50,8 +52,9 @@ const ClimbsList = (props) => {
           }
         });
         setClimbs(climbDocs);
+        unsubscribe();
         setLoadData(false);
-      }
+      });
     }
     if (loadData) {
       fetchData();
@@ -74,37 +77,53 @@ const ClimbsList = (props) => {
 
   return (
     <View style={containerStyle.flatlistContainer}>
-      <FlatList
-        style={generalStyle.flatListStyle}
-        data={climbs}
-        numColumns={1}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) =>
-          item.data.approved ? (
+      {!loadData ? (
+        <FlatList
+          style={generalStyle.flatListStyle}
+          data={climbs}
+          numColumns={1}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) =>
+            item.data.approved ? (
+              <TouchableOpacity
+                style={buttonStyle.buttonInput}
+                onPress={() => handleClimbSiteClick(item.id)}
+              >
+                <Text style={buttonStyle.buttonText}>
+                  {item.data.climbName}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={buttonStyle.buttonInputApprovalPending}
+                onPress={() => handleClimbSiteClick(item.id)}
+              >
+                <Text style={buttonStyle.buttonText}>
+                  {item.data.climbName}
+                </Text>
+              </TouchableOpacity>
+            )
+          }
+          ListFooterComponent={
             <TouchableOpacity
               style={buttonStyle.buttonInput}
-              onPress={() => handleClimbSiteClick(item.id)}
+              onPress={() => handleAddClimbClick(id)}
             >
-              <Text style={buttonStyle.buttonText}>{item.data.climbName}</Text>
+              <Text style={buttonStyle.buttonText}>Add New Climb</Text>
             </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={buttonStyle.buttonInputApprovalPending}
-              onPress={() => handleClimbSiteClick(item.id)}
-            >
-              <Text style={buttonStyle.buttonText}>{item.data.climbName}</Text>
-            </TouchableOpacity>
-          )
-        }
-        ListFooterComponent={
-          <TouchableOpacity
-            style={buttonStyle.buttonInput}
-            onPress={() => handleAddClimbClick(id)}
-          >
-            <Text style={buttonStyle.buttonText}>Add New Climb</Text>
-          </TouchableOpacity>
-        }
-      ></FlatList>
+          }
+        ></FlatList>
+      ) : (
+        <View style={containerStyle.loadingContainer}>
+          <Text style={fontStyle.title}>Loading..</Text>
+          <Progress.CircleSnail
+            size={100}
+            thickness={8}
+            spinDuration={2000}
+            color={['green', 'blue', 'red', 'purple']}
+          />
+        </View>
+      )}
     </View>
   );
 };

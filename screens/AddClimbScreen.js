@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { db, auth, firebase, userAdmin } from '../backend/firebase';
 import { CheckBox } from '@rneui/themed';
+import * as Progress from 'react-native-progress';
 
 const AddClimbScreen = ({ route }) => {
   // props
@@ -389,138 +390,179 @@ const AddClimbScreen = ({ route }) => {
       >
         <Menu />
         <ScrollView style={containerStyle.scrollStyle}>
-          <Text style={fontStyle.detailTitle}>Add New Climb</Text>
-          <View style={containerStyle.innerContainer}>
-            <View style={containerStyle.buttonContainer}>
-              {image && (
-                <>
-                  <Text style={fontStyle.detailTitle}>Climb Photo</Text>
-                  <Image
-                    source={{ uri: image }}
-                    style={imageStyle.uploadImage}
-                  />
-                </>
-              )}
-              {image ? (
-                <TouchableOpacity
-                  style={buttonStyle.buttonInput}
-                  onPress={() => pickImage()}
-                >
-                  <Text style={buttonStyle.buttonText}>
-                    Change Image From Camera Roll
-                  </Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  style={buttonStyle.buttonInput}
-                  onPress={() => pickImage()}
-                >
-                  <Text style={buttonStyle.buttonText}>
-                    Pick Image From Camera Roll
-                  </Text>
-                </TouchableOpacity>
-              )}
-              <Text style={fontStyle.detailTitle}>Climb Name</Text>
-              <TextInput
-                style={inputStyle.textInput}
-                autoCapitalize='words'
-                placeholder='Enter Climb Name..'
-                placeholderTextColor={'white'}
-                value={climbName}
-                onChangeText={(text) => setClimbName(text)}
-              />
-              <Text style={fontStyle.detailTitle}>Climb Grade</Text>
-              <TextInput
-                style={inputStyle.textInput}
-                placeholder='Enter Climb Grade..'
-                keyboardType='numeric'
-                placeholderTextColor={'white'}
-                value={climbGrade}
-                onChangeText={(text) => setClimbGrade(Number(text))}
-              />
-              <Text style={fontStyle.detailTitle}>Climb Height</Text>
-              <TextInput
-                style={inputStyle.textInput}
-                placeholder='Enter Climb Height In Meters..'
-                keyboardType='numeric'
-                placeholderTextColor={'white'}
-                value={climbHeight}
-                onChangeText={(text) => setClimbHeight(Number(text))}
-              />
+          {!uploading ? (
+            <>
+              <Text style={fontStyle.detailTitle}>Add New Climb</Text>
 
-              <CheckBox
-                containerStyle={{
-                  backgroundColor: 'rgba(0, 0, 0, 0)',
-
-                  marginVertical: '0%',
-                }}
-                textStyle={fontStyle.checkBox}
-                center
-                title={'Traditional'}
-                checked={tradClimb}
-                checkedColor={'white'}
-                onPress={() => setTradClimb(!tradClimb)}
-              />
-              <CheckBox
-                containerStyle={{
-                  backgroundColor: 'rgba(0, 0, 0, 0)',
-
-                  marginVertical: '0%',
-                }}
-                textStyle={fontStyle.checkBox}
-                center
-                title={'Climbed Already?'}
-                checked={hasClimbed}
-                checkedColor={'white'}
-                onPress={() => setHasClimbed(!hasClimbed)}
-              />
-              <CheckBox
-                containerStyle={{
-                  backgroundColor: 'rgba(0, 0, 0, 0)',
-
-                  marginVertical: '0%',
-                }}
-                textStyle={fontStyle.checkBox}
-                center
-                title={'Climb has bolts?'}
-                checked={hasBolts}
-                checkedColor={'white'}
-                onPress={() => setHasBolts(!hasBolts)}
-              />
-              {hasBolts ? (
-                <>
-                  <Text style={fontStyle.detailTitle}>
-                    Number of Bolt Placements
-                  </Text>
+              <View style={containerStyle.innerContainer}>
+                <View style={containerStyle.buttonContainer}>
+                  {image && (
+                    <>
+                      <Text style={fontStyle.detailTitle}>Climb Photo</Text>
+                      <Image
+                        source={{ uri: image }}
+                        style={imageStyle.uploadImage}
+                      />
+                    </>
+                  )}
+                  {image ? (
+                    <TouchableOpacity
+                      style={buttonStyle.buttonInput}
+                      onPress={() => pickImage()}
+                    >
+                      <Text style={buttonStyle.buttonText}>
+                        Change Image From Camera Roll
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={buttonStyle.buttonInput}
+                      onPress={() => pickImage()}
+                    >
+                      <Text style={buttonStyle.buttonText}>
+                        Pick Image From Camera Roll
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  <Text style={fontStyle.detailTitle}>Climb Name</Text>
                   <TextInput
                     style={inputStyle.textInput}
-                    placeholder='Number Of Bolts..'
+                    autoCapitalize='words'
+                    placeholder='Enter Climb Name..'
+                    placeholderTextColor={'white'}
+                    value={climbName}
+                    onChangeText={(text) => setClimbName(text)}
+                  />
+                  <Text style={fontStyle.detailTitle}>Climb Grade</Text>
+                  <TextInput
+                    style={inputStyle.textInput}
+                    placeholder='Enter Climb Grade..'
                     keyboardType='numeric'
                     placeholderTextColor={'white'}
-                    value={numOfBolts}
-                    onChangeText={(text) => setNumOfBolts(Number(text))}
+                    value={climbGrade}
+                    onChangeText={(text) => setClimbGrade(Number(text))}
+                  />
+                  <Text style={fontStyle.detailTitle}>Climb Height</Text>
+                  <TextInput
+                    style={inputStyle.textInput}
+                    placeholder='Enter Climb Height In Meters..'
+                    keyboardType='numeric'
+                    placeholderTextColor={'white'}
+                    value={climbHeight}
+                    onChangeText={(text) => setClimbHeight(Number(text))}
+                  />
+
+                  <CheckBox
+                    containerStyle={{
+                      backgroundColor: 'rgba(0, 0, 0, 0)',
+
+                      marginVertical: '0%',
+                    }}
+                    textStyle={fontStyle.checkBox}
+                    center
+                    title={'Traditional'}
+                    checked={tradClimb}
+                    checkedColor={'white'}
+                    onPress={() => setTradClimb(!tradClimb)}
+                  />
+                  <CheckBox
+                    containerStyle={{
+                      backgroundColor: 'rgba(0, 0, 0, 0)',
+
+                      marginVertical: '0%',
+                    }}
+                    textStyle={fontStyle.checkBox}
+                    center
+                    title={'Climbed Already?'}
+                    checked={hasClimbed}
+                    checkedColor={'white'}
+                    onPress={() => setHasClimbed(!hasClimbed)}
+                  />
+                  <CheckBox
+                    containerStyle={{
+                      backgroundColor: 'rgba(0, 0, 0, 0)',
+
+                      marginVertical: '0%',
+                    }}
+                    textStyle={fontStyle.checkBox}
+                    center
+                    title={'Climb has bolts?'}
+                    checked={hasBolts}
+                    checkedColor={'white'}
+                    onPress={() => setHasBolts(!hasBolts)}
+                  />
+                  {hasBolts ? (
+                    <>
+                      <Text style={fontStyle.detailTitle}>
+                        Number of Bolt Placements
+                      </Text>
+                      <TextInput
+                        style={inputStyle.textInput}
+                        placeholder='Number Of Bolts..'
+                        keyboardType='numeric'
+                        placeholderTextColor={'white'}
+                        value={numOfBolts}
+                        onChangeText={(text) => setNumOfBolts(Number(text))}
+                      />
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                  <Text style={fontStyle.detailTitle}>Climb Comments</Text>
+                  <TextInput
+                    style={inputStyle.textInput}
+                    placeholder='Climb Comments?'
+                    placeholderTextColor={'white'}
+                    value={comments}
+                    onChangeText={(text) => setComments(text)}
+                  />
+                  <TouchableOpacity
+                    disabled={uploading}
+                    style={buttonStyle.buttonInput}
+                    onPress={() => handleSubmit()}
+                  >
+                    <Text style={buttonStyle.buttonText}>Submit New Climb</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </>
+          ) : (
+            <View style={containerStyle.loadingContainer}>
+              <Text style={fontStyle.detailTitle}>
+                Uploading Climb Please Wait..
+              </Text>
+              {transfering != 100 ? (
+                <>
+                  <Text></Text>
+                  <Text style={fontStyle.details}>
+                    Uploading Image Please Wait..
+                  </Text>
+                  <Progress.Circle
+                    style={{ margin: 10 }}
+                    size={100}
+                    showsText={true}
+                    color={'white'}
+                    thickness={8}
+                    progress={transfering / 100}
                   />
                 </>
               ) : (
-                <></>
+                <>
+                  <Text></Text>
+                  <Text style={fontStyle.details}>
+                    Image Uploaded, Uploading Climb Please Wait..
+                  </Text>
+                </>
               )}
-              <Text style={fontStyle.detailTitle}>Climb Comments</Text>
-              <TextInput
-                style={inputStyle.textInput}
-                placeholder='Climb Comments?'
-                placeholderTextColor={'white'}
-                value={comments}
-                onChangeText={(text) => setComments(text)}
+
+              <Progress.CircleSnail
+                size={100}
+                thickness={8}
+                spinDuration={2000}
+                color={['green', 'blue', 'red', 'purple']}
               />
-              <TouchableOpacity
-                disabled={uploading}
-                style={buttonStyle.buttonInput}
-                onPress={() => handleSubmit()}
-              >
-                <Text style={buttonStyle.buttonText}>Submit New Climb</Text>
-              </TouchableOpacity>
             </View>
-          </View>
+          )}
         </ScrollView>
       </ImageBackground>
     </View>

@@ -2,8 +2,9 @@ import { View, Text, ImageBackground, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Menu from '../components/Menu';
 import { CheckBox } from '@rneui/themed';
-import { auth, db, firebase, userAdmin } from '../backend/firebase';
+import { auth, db, userAdmin } from '../backend/firebase';
 import ApprovalButton from '../components/ApprovalButton';
+import * as Progress from 'react-native-progress';
 
 const ClimbDetailScreen = ({ route }) => {
   //states
@@ -53,7 +54,7 @@ const ClimbDetailScreen = ({ route }) => {
     }
   }, [climbData]);
 
-  // get image from stored imgUrl 
+  // get image from stored imgUrl
   useEffect(() => {
     if (climbData) {
       setImage(climbData.imgUrl);
@@ -91,7 +92,15 @@ const ClimbDetailScreen = ({ route }) => {
         <ScrollView style={containerStyle.scrollStyle}>
           <View style={containerStyle.innerContainer}>
             {climbData == null ? (
-              <Text style={fontStyle.detailTitle}>Loading..</Text>
+              <View style={containerStyle.loadingContainer}>
+                <Text style={fontStyle.detailTitle}>Loading..</Text>
+                <Progress.CircleSnail
+                  size={100}
+                  thickness={8}
+                  spinDuration={2000}
+                  color={['green', 'blue', 'red', 'purple']}
+                />
+              </View>
             ) : (
               <View style={containerStyle.scrollInnerContainer}>
                 <Text style={fontStyle.detailTitle}>Climb Site Name</Text>

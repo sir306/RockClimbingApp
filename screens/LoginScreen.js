@@ -8,11 +8,14 @@ import {
 import React, { useEffect, useState } from 'react';
 import { auth } from '../backend/firebase';
 import { useNavigation } from '@react-navigation/native';
+import * as Progress from 'react-native-progress';
 
 const LoginScreen = () => {
   // states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   // styles
   const buttonStyle = require('../styles/buttonStyles');
@@ -47,14 +50,23 @@ const LoginScreen = () => {
 
   // handle sign in func
   const handleSignIn = () => {
+    setDisabled(true);
+    setLoading(true);
     auth
       .signInWithEmailAndPassword(email, password)
       .then((useCredentials) => {
         const user = useCredentials.user;
         console.log('User signed in with:', user.email);
+        setDisabled(false);
+        setLoading(false);
         navigation.navigate('Climb Sites');
       })
-      .catch((error) => alert(error.message));
+
+      .catch((error) => {
+        alert(error.message);
+        setDisabled(false);
+        setLoading(false);
+      });
   };
 
   return (
@@ -66,37 +78,57 @@ const LoginScreen = () => {
       >
         <Text style={fontStyle.title}>Login</Text>
         <View style={containerStyle.innerContainer}>
-          <View style={inputStyle.inputContainer}>
-            <TextInput
-              style={inputStyle.textInput}
-              placeholder='Enter Your Email..'
-              placeholderTextColor={'white'}
-              value={email}
-              onChangeText={(text) => setEmail(text.trimEnd())}
-            />
-            <TextInput
-              style={inputStyle.textInput}
-              placeholder='Enter Your Password..'
-              placeholderTextColor={'white'}
-              secureTextEntry
-              value={password}
-              onChangeText={(text) => setPassword(text.trimEnd())}
-            />
-          </View>
-          <View style={containerStyle.buttonContainer}>
-            <TouchableOpacity
-              style={buttonStyle.buttonInput}
-              onPress={() => handleSignIn()}
-            >
-              <Text style={buttonStyle.buttonText}>Login</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={buttonStyle.buttonInput}
-              onPress={() => handleSignUp()}
-            >
-              <Text style={buttonStyle.buttonText}>Register A New Account</Text>
-            </TouchableOpacity>
-          </View>
+          {loading ? (
+            <>
+              <View style={containerStyle.loadingContainer}>
+                <Text style={fontStyle.detailTitle}>Logging In..</Text>
+                <Progress.CircleSnail
+                  size={100}
+                  thickness={8}
+                  spinDuration={2000}
+                  color={['green', 'blue', 'red', 'purple']}
+                />
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={inputStyle.inputContainer}>
+                <TextInput
+                  style={inputStyle.textInput}
+                  placeholder='Enter Your Email..'
+                  placeholderTextColor={'white'}
+                  value={email}
+                  onChangeText={(text) => setEmail(text.trimEnd())}
+                />
+                <TextInput
+                  style={inputStyle.textInput}
+                  placeholder='Enter Your Password..'
+                  placeholderTextColor={'white'}
+                  secureTextEntry
+                  value={password}
+                  onChangeText={(text) => setPassword(text.trimEnd())}
+                />
+              </View>
+              <View style={containerStyle.buttonContainer}>
+                <TouchableOpacity
+                  disabled={disabled}
+                  style={buttonStyle.buttonInput}
+                  onPress={() => handleSignIn()}
+                >
+                  <Text style={buttonStyle.buttonText}>Login</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={disabled}
+                  style={buttonStyle.buttonInput}
+                  onPress={() => handleSignUp()}
+                >
+                  <Text style={buttonStyle.buttonText}>
+                    Register A New Account
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </View>
       </ImageBackground>
     </View>

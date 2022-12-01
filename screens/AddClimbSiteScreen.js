@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { db, auth, firebase, userAdmin } from '../backend/firebase';
 import * as Location from 'expo-location';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import * as Progress from 'react-native-progress';
 
 const AddClimbSiteScreen = () => {
   // states
@@ -21,6 +22,7 @@ const AddClimbSiteScreen = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [disabled, setDisabled] = useState(false);
   const [climbSiteName, setClimbSiteName] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   // variables
   // form error
@@ -50,22 +52,38 @@ const AddClimbSiteScreen = () => {
         setErrorMsg(
           'Permission to access location was denied, Setting starting location to ChristChurch New Zealand'
         );
-        // set location to christchurch new zealand
+        // set location to christchurch new zealand as permission denied
         setLocation({
-          lat: -43.5103672,
-          long: 172.057657,
+          lat: -43.532101010800616,
+          long: 172.63060362161082,
         });
         return;
       }
+      try {
+        let hasServiceEnabled = await Location.hasServicesEnabledAsync();
 
-      let location = await Location.getCurrentPositionAsync({});
-      let latlong = {
-        lat: location.coords.latitude,
-        long: location.coords.longitude,
-      };
-      setLocation(latlong);
+        if (hasServiceEnabled) {
+          let location = await Location.getCurrentPositionAsync({});
+          let latlong = {
+            lat: location.coords.latitude,
+            long: location.coords.longitude,
+          };
+          setLocation(latlong);
+        } else {
+          Alert.alert(
+            'Location Not Enabled',
+            'Please enable your location to find your location, Setting starting location to ChristChurch New Zealand. If you wish to set the marker on your position, then enable your location.'
+          );
+          setLocation({
+            lat: -43.532101010800616,
+            long: 172.63060362161082,
+          });
+        }
+      } catch (error) {
+        Alert.alert('Location Error', error);
+      }
     })();
-  }, []);
+  }, [hasServiceEnabled]);
 
   // set loading text for location or set text to the error message
   let text = 'Waiting For Location..';
@@ -202,7 +220,19 @@ const AddClimbSiteScreen = () => {
               />
               <Text style={fontStyle.detailTitle}>Climb Location</Text>
               <Text style={fontStyle.hintText}>{text}</Text>
-              {location ? (
+              {!location ? (
+                <>
+                  <View style={containerStyle.loadingContainer}>
+                    <Text style={fontStyle.detailTitle}>{text}</Text>
+                    <Progress.CircleSnail
+                      size={100}
+                      thickness={8}
+                      spinDuration={2000}
+                      color={['green', 'blue', 'red', 'purple']}
+                    />
+                  </View>
+                </>
+              ) : (
                 <>
                   <MapView
                     style={mapStyle.mapStyle}
@@ -233,8 +263,6 @@ const AddClimbSiteScreen = () => {
                     the marker where you want it.
                   </Text>
                 </>
-              ) : (
-                <></>
               )}
 
               <TouchableOpacity

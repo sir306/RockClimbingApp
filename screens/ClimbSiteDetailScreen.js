@@ -10,13 +10,15 @@ import Menu from '../components/Menu';
 import React, { useEffect, useState } from 'react';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import ApprovalButton from '../components/ApprovalButton';
-import { db, auth, firebase, userAdmin } from '../backend/firebase';
+import { db, auth, userAdmin } from '../backend/firebase';
+import * as Progress from 'react-native-progress';
 
 const ClimbSiteDetailScreen = ({ route }) => {
   // states
   const [climbTypes, setClimbTypes] = useState('');
   const [gradeRange, setGradeRange] = useState('');
   const [siteData, setSiteData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // navigation
   const navigation = useNavigation();
@@ -39,23 +41,25 @@ const ClimbSiteDetailScreen = ({ route }) => {
   useEffect(() => {
     const unscribe = navigation.addListener('focus', () => {
       setSiteData(null);
+      setLoading(true);
     });
     return unscribe;
   }, [navigation]);
 
   // get climbsite data
   useEffect(() => {
-    const climbSiteDoc = db.collection('climbSites').doc(id);
-    climbSiteDoc.get().then((data) => {
-      setSiteData(data.data());
-    });
-
+    if (loading) {
+      const climbSiteDoc = db.collection('climbSites').doc(id);
+      climbSiteDoc.get().then((data) => {
+        setSiteData(data.data());
+      });
+    }
     return () => {};
-  }, [siteData]);
+  }, [siteData, loading]);
 
   // get site climb types and grade range
   useEffect(() => {
-    if (siteData != null) {
+    if (siteData != null && loading) {
       let climbTypeString = '';
       let i = 1;
       let siteTypeLen = siteData.climbTypes.length;
@@ -70,6 +74,7 @@ const ClimbSiteDetailScreen = ({ route }) => {
       let climbRange = getGradeRange();
       setGradeRange(climbRange);
       setClimbTypes(climbTypeString);
+      setLoading(false);
     }
   }, [siteData]);
 
@@ -105,7 +110,7 @@ const ClimbSiteDetailScreen = ({ route }) => {
         style={imageStyle.imageBackground}
       >
         <Menu />
-        {siteData != null ? (
+        {!loading && siteData != null ? (
           <ScrollView style={containerStyle.scrollStyle}>
             <View style={containerStyle.innerContainer}>
               <Text style={fontStyle.detailTitle}>Climb Site Name</Text>
@@ -153,7 +158,15 @@ const ClimbSiteDetailScreen = ({ route }) => {
             </View>
           </ScrollView>
         ) : (
-          <Text style={fontStyle.title}>Loading Site Data..</Text>
+          <View style={containerStyle.loadingContainer}>
+            <Text style={fontStyle.title}>Loading..</Text>
+            <Progress.CircleSnail
+              size={100}
+              thickness={8}
+              spinDuration={2000}
+              color={['green', 'blue', 'red', 'purple']}
+            />
+          </View>
         )}
       </ImageBackground>
     </View>
