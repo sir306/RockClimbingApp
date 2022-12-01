@@ -44,7 +44,6 @@ const AddClimbScreen = ({ route }) => {
   const containerStyle = require('../styles/containerStyles');
   const buttonStyle = require('../styles/buttonStyles');
   const fontStyle = require('../styles/fontStyles');
-  const generalStyle = require('../styles/generalStyles');
   const inputStyle = require('../styles/inputStyles');
 
   // background image
@@ -163,8 +162,6 @@ const AddClimbScreen = ({ route }) => {
       await submitPhoto();
     }
   };
-
-  /** TODO update grade range and implement with approval button for climbs **/
 
   // check and update climb site if grade range and climbTypes needs
   // updating

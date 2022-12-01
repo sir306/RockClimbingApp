@@ -2,7 +2,8 @@ import { View, Text, ImageBackground, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Menu from '../components/Menu';
 import { CheckBox } from '@rneui/themed';
-import { auth, db, firebase } from '../backend/firebase';
+import { auth, db, firebase, userAdmin } from '../backend/firebase';
+import ApprovalButton from '../components/ApprovalButton';
 
 const ClimbDetailScreen = ({ route }) => {
   //states
@@ -10,11 +11,11 @@ const ClimbDetailScreen = ({ route }) => {
   const [image, setImage] = useState(null);
   const [disabled, setDisabled] = useState(false);
   const [currentClimbedClimbers, setCurrentClimbedClimbers] = useState([]);
+  const [climbData, setClimbData] = useState(null);
 
   // get data
   const data = route.params;
-  // get climb data
-  const climbData = data.climb.data;
+
   // get climb id
   const id = data.climb.id;
 
@@ -30,28 +31,34 @@ const ClimbDetailScreen = ({ route }) => {
   // no image upload
   const noImage = require('../assets/noImage.jpg');
 
-  // useEffect to see if the user has climbed climb
+  // useEffects
+  // get climb data
   useEffect(() => {
-    setCurrentClimbedClimbers(climbData.climbedClimbers);
-    climbData.climbedClimbers.forEach((climber) => {
-      if (climber == auth.currentUser.uid) {
-        setToggleCheckBox(true);
-      }
+    const climbDoc = db.collection('climbs').doc(id);
+    climbDoc.get().then((data) => {
+      setClimbData(data.data());
     });
-  }, []);
+    return () => {};
+  }, [climbData]);
 
-  // get image from firebase storage
+  //see if the user has climbed climb
   useEffect(() => {
-    const imageRef = firebase
-      .storage()
-      .ref('/climbPhotos/' + '0a3c629a-207a-4662-aed9-857d4948ea0f.jpeg');
-    imageRef
-      .getDownloadURL()
-      .then((url) => {
-        setImage(url);
-      })
-      .catch((e) => console.log('getting downloadURL of image error => ', e));
-  }, []);
+    if (climbData) {
+      setCurrentClimbedClimbers(climbData.climbedClimbers);
+      climbData.climbedClimbers.forEach((climber) => {
+        if (climber == auth.currentUser.uid) {
+          setToggleCheckBox(true);
+        }
+      });
+    }
+  }, [climbData]);
+
+  // get image from stored imgUrl 
+  useEffect(() => {
+    if (climbData) {
+      setImage(climbData.imgUrl);
+    }
+  }, [climbData]);
 
   // change the climbed status data on firebase
   const updateClimbed = async (climbed) => {
@@ -67,7 +74,6 @@ const ClimbDetailScreen = ({ route }) => {
     }
     setCurrentClimbedClimbers(newClimbedClimbers);
 
-    console.log(id);
     var climbDocRef = db.collection('climbs').doc(id);
     await climbDocRef.update({
       climbedClimbers: newClimbedClimbers,
@@ -84,62 +90,86 @@ const ClimbDetailScreen = ({ route }) => {
         <Menu />
         <ScrollView style={containerStyle.scrollStyle}>
           <View style={containerStyle.innerContainer}>
-            <View style={containerStyle.scrollInnerContainer}>
-              <Text style={fontStyle.detailTitle}>Climb Site Name</Text>
-              <Text style={fontStyle.details}>{climbData.climbSiteName}</Text>
-              <Text style={fontStyle.detailTitle}>Climb Name</Text>
-              <Text style={fontStyle.details}>{climbData.climbName}</Text>
-              <Text style={fontStyle.detailTitle}>Climb Image</Text>
-              {image ? (
-                <ImageBackground
-                  source={{
-                    uri: image,
-                  }}
-                  style={imageStyle.imageClimb}
-                ></ImageBackground>
-              ) : (
-                <ImageBackground source={noImage} style={imageStyle.imageClimb}>
-                  <Text style={fontStyle.noImageText}>No image found</Text>
-                </ImageBackground>
-              )}
+            {climbData == null ? (
+              <Text style={fontStyle.detailTitle}>Loading..</Text>
+            ) : (
+              <View style={containerStyle.scrollInnerContainer}>
+                <Text style={fontStyle.detailTitle}>Climb Site Name</Text>
+                <Text style={fontStyle.details}>{climbData.climbSiteName}</Text>
+                <Text style={fontStyle.detailTitle}>Climb Name</Text>
+                <Text style={fontStyle.details}>{climbData.climbName}</Text>
+                <Text style={fontStyle.detailTitle}>Climb Image</Text>
+                {image ? (
+                  <ImageBackground
+                    source={{
+                      uri: image,
+                    }}
+                    style={imageStyle.imageClimb}
+                  ></ImageBackground>
+                ) : (
+                  <ImageBackground
+                    source={noImage}
+                    style={imageStyle.imageClimb}
+                  >
+                    <Text style={fontStyle.noImageText}>No image found</Text>
+                  </ImageBackground>
+                )}
 
-              <Text style={fontStyle.detailTitle}>Climb Grade</Text>
-              <Text style={fontStyle.details}>{climbData.grade}</Text>
-              <Text style={fontStyle.detailTitle}>Climb Type</Text>
-              <Text style={fontStyle.details}>
-                {climbData.trad ? 'Traditional Climb' : 'Sports Climb'}
-              </Text>
-              <Text style={fontStyle.detailTitle}>Number of bolts</Text>
-              <Text style={fontStyle.details}>{climbData.bolts}</Text>
-              <Text style={fontStyle.detailTitle}>Climbed</Text>
-              <CheckBox
-                containerStyle={{
-                  backgroundColor: 'rgba(0, 0, 0, 0)',
-                  marginLeft: '5%',
-                  marginRight: '5%',
-                  marginVertical: '0%',
-                  paddingTop: 8,
-                  paddingBottom: 8,
-                }}
-                textStyle={fontStyle.checkBox}
-                center
-                disabled={disabled}
-                title={!toggleCheckBox ? 'Not Yet' : 'Conquered'}
-                checked={toggleCheckBox}
-                onPress={() => updateClimbed(!toggleCheckBox)}
-              />
-              <Text style={fontStyle.detailTitle}>Comments</Text>
-              <Text style={fontStyle.details}>
-                {climbData.comments
-                  ? climbData.comments
-                  : 'No comments where uploaded with this climb'}
-              </Text>
-            </View>
+                <Text style={fontStyle.detailTitle}>Climb Grade</Text>
+                <Text style={fontStyle.details}>{climbData.grade}</Text>
+                <Text style={fontStyle.detailTitle}>Climb Type</Text>
+                <Text style={fontStyle.details}>
+                  {climbData.trad && climbData.bolts > 0
+                    ? 'Mixed Climb'
+                    : climbData.trad
+                    ? 'Traditional Climb'
+                    : 'Sports Climb'}
+                </Text>
+                <Text style={fontStyle.detailTitle}>Number of bolts</Text>
+                <Text style={fontStyle.details}>{climbData.bolts}</Text>
+                <Text style={fontStyle.detailTitle}>Climbed</Text>
+                <CheckBox
+                  containerStyle={{
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    marginLeft: '5%',
+                    marginRight: '5%',
+                    marginVertical: '0%',
+                    paddingTop: 8,
+                    paddingBottom: 8,
+                  }}
+                  textStyle={fontStyle.checkBox}
+                  center
+                  disabled={disabled}
+                  title={!toggleCheckBox ? 'Not Yet' : 'Conquered'}
+                  checked={toggleCheckBox}
+                  onPress={() => updateClimbed(!toggleCheckBox)}
+                />
+                <Text style={fontStyle.detailTitle}>Comments</Text>
+                <Text style={fontStyle.details}>
+                  {climbData.comments
+                    ? climbData.comments
+                    : 'No comments where uploaded with this climb'}
+                </Text>
+                {!climbData.approved && userAdmin(auth.currentUser.uid) ? (
+                  <ApprovalButton
+                    climbSite={false}
+                    climbSiteId={climbData.climbSiteId}
+                    data={{
+                      climbId: id,
+                      grade: climbData.grade,
+                      bolts: climbData.bolts,
+                      trad: climbData.trad,
+                    }}
+                  />
+                ) : (
+                  <></>
+                )}
+              </View>
+            )}
           </View>
         </ScrollView>
       </ImageBackground>
     </View>
   );
 };
-
 export default ClimbDetailScreen;

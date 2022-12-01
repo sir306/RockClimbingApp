@@ -55,11 +55,7 @@ const ClimbSiteList = () => {
 
   // handle climbsite click
   const handleClimbSiteClick = (id) => {
-    climbSites.forEach((site) => {
-      if (site.id == id) {
-        navigation.navigate('Climb Site Detail', { site });
-      }
-    });
+    navigation.navigate('Climb Site Detail', { id });
   };
 
   const handleAddClimbSiteClick = () => {
