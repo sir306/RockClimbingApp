@@ -83,7 +83,7 @@ const AddClimbSiteScreen = () => {
         Alert.alert('Location Error', error);
       }
     })();
-  }, [hasServiceEnabled]);
+  }, []);
 
   // set loading text for location or set text to the error message
   let text = 'Waiting For Location..';
