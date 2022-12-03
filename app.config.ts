@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
   slug: 'RockClimbingApp',
   name: 'RockClimbingApp',
   ios: {
@@ -14,6 +15,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
   },
   android: {
+    package: 'com.yourcompany.RockClimbingApp',
+    versionCode: 1,
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#FFFFFF',
@@ -24,5 +27,4 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     },
   },
-  ...config,
 });

@@ -1,5 +1,10 @@
 {
   "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "53416c5d-b6f1-4cc4-9a56-249264bd9874"
+      }
+    },
     "name": "RockClimbingApp",
     "slug": "RockClimbingApp",
     "version": "1.0.0",
@@ -19,6 +24,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.yourcompany.yourappname",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
