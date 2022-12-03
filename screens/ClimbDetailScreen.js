@@ -5,6 +5,7 @@ import { CheckBox } from '@rneui/themed';
 import { auth, db, userAdmin } from '../backend/firebase';
 import ApprovalButton from '../components/ApprovalButton';
 import * as Progress from 'react-native-progress';
+import RejectButton from '../components/RejectButton';
 
 const ClimbDetailScreen = ({ route }) => {
   //states
@@ -23,9 +24,7 @@ const ClimbDetailScreen = ({ route }) => {
   // styles
   const imageStyle = require('../styles/imageStyles');
   const containerStyle = require('../styles/containerStyles');
-  const buttonStyle = require('../styles/buttonStyles');
   const fontStyle = require('../styles/fontStyles');
-  const generalStyle = require('../styles/generalStyles');
 
   // background image
   const backgroundImage = require('../assets/background.jpg');
@@ -40,7 +39,7 @@ const ClimbDetailScreen = ({ route }) => {
       setClimbData(data.data());
     });
     return () => {};
-  }, [climbData]);
+  }, []);
 
   //see if the user has climbed climb
   useEffect(() => {
@@ -160,16 +159,26 @@ const ClimbDetailScreen = ({ route }) => {
                     : 'No comments where uploaded with this climb'}
                 </Text>
                 {!climbData.approved && userAdmin(auth.currentUser.uid) ? (
-                  <ApprovalButton
-                    climbSite={false}
-                    climbSiteId={climbData.climbSiteId}
-                    data={{
-                      climbId: id,
-                      grade: climbData.grade,
-                      bolts: climbData.bolts,
-                      trad: climbData.trad,
-                    }}
-                  />
+                  <>
+                    <ApprovalButton
+                      climbSite={false}
+                      climbSiteId={climbData.climbSiteId}
+                      data={{
+                        climbId: id,
+                        grade: climbData.grade,
+                        bolts: climbData.bolts,
+                        trad: climbData.trad,
+                      }}
+                    />
+                    <RejectButton
+                      climbSite={false}
+                      climbSiteId={climbData.climbSiteId}
+                      data={{
+                        climbId: id,
+                        climbSiteName: climbData.climbSiteName,
+                      }}
+                    />
+                  </>
                 ) : (
                   <></>
                 )}

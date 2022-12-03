@@ -33,7 +33,6 @@ const ClimbSiteList = () => {
     async function fetchData() {
       const climbSiteCol = db.collection('climbSites');
       let approved = await userAdmin(auth.currentUser.uid);
-
       var unsubscribe = climbSiteCol
         .orderBy('siteName')
         .onSnapshot((querySnapshot) => {
@@ -55,7 +54,7 @@ const ClimbSiteList = () => {
     if (loadData) {
       fetchData();
     }
-  }, [loadData, climbSites]);
+  }, [loadData]);
 
   // handle climbsite click
   const handleClimbSiteClick = (id) => {

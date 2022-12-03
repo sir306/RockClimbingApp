@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
-import React, { useEffect, useState, Ref, useRef } from 'react';
-import { db, auth, firebase, userAdmin } from '../backend/firebase';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { db } from '../backend/firebase';
 
 const ApprovalButton = (params) => {
   // states
@@ -11,12 +10,9 @@ const ApprovalButton = (params) => {
   const isClimbSite = params.climbSite;
   const climbSiteId = params.climbSiteId;
   const data = params.data ? params.data : null;
-  const buttonRef = useRef();
   // Styles
-  const imageStyle = require('../styles/imageStyles');
   const containerStyle = require('../styles/containerStyles');
   const buttonStyle = require('../styles/buttonStyles');
-  const fontStyle = require('../styles/fontStyles');
 
   // functions
   // approve function from click
@@ -181,7 +177,7 @@ const ApprovalButton = (params) => {
     <View style={containerStyle.buttonContainer}>
       <TouchableOpacity
         disabled={disabled || uploading}
-        style={disabled ? buttonStyle.disabled : buttonStyle.buttonInput}
+        style={disabled ? buttonStyle.disabled : buttonStyle.approveInput}
         onPress={() => {
           approve();
         }}

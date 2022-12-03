@@ -17,7 +17,6 @@ const ClimbsList = (props) => {
   const navigation = useNavigation();
 
   // styles
-  const imageStyle = require('../styles/imageStyles');
   const containerStyle = require('../styles/containerStyles');
   const buttonStyle = require('../styles/buttonStyles');
   const generalStyle = require('../styles/generalStyles');
@@ -59,7 +58,7 @@ const ClimbsList = (props) => {
     if (loadData) {
       fetchData();
     }
-  }, [loadData, climbs]);
+  }, [loadData]);
 
   // handle climbsite click
   const handleClimbSiteClick = (id) => {

@@ -12,6 +12,7 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import ApprovalButton from '../components/ApprovalButton';
 import { db, auth, userAdmin } from '../backend/firebase';
 import * as Progress from 'react-native-progress';
+import RejectButton from '../components/RejectButton';
 
 const ClimbSiteDetailScreen = ({ route }) => {
   // states
@@ -55,7 +56,7 @@ const ClimbSiteDetailScreen = ({ route }) => {
       });
     }
     return () => {};
-  }, [siteData, loading]);
+  }, [loading]);
 
   // get site climb types and grade range
   useEffect(() => {
@@ -152,7 +153,10 @@ const ClimbSiteDetailScreen = ({ route }) => {
                 {siteData.approved && userAdmin(auth.currentUser.uid) ? (
                   <></>
                 ) : (
-                  <ApprovalButton climbSite={true} climbSiteId={id} />
+                  <>
+                    <ApprovalButton climbSite={true} climbSiteId={id} />
+                    <RejectButton climbSite={true} climbSiteId={id} />
+                  </>
                 )}
               </View>
             </View>
