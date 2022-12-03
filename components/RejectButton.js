@@ -65,10 +65,13 @@ const RejectButton = (params) => {
   const deleteClimb = async () => {
     const climbDoc = db.collection('climbs').doc(data.climbId);
     let imageUrl = (await climbDoc.get()).data().imgUrl;
-    let imageRef = firebase.storage().refFromURL(imageUrl);
-    imageRef.delete().catch((error) => {
-      Alert.alert('Image Delete Failed', error);
-    });
+    // check not empty
+    if (imageUrl) {
+      let imageRef = firebase.storage().refFromURL(imageUrl);
+      imageRef.delete().catch((error) => {
+        Alert.alert('Image Delete Failed', error);
+      });
+    }
     climbDoc.delete().catch((error) => {
       Alert.alert('Climb Delete Failed', error);
     });
@@ -88,11 +91,14 @@ const RejectButton = (params) => {
           querySnapshot.docs.map((doc) => {
             // get image url from the doc and delete
             let imageUrl = doc.data().imgUrl;
-            let imageRef = firebase.storage().refFromURL(imageUrl);
-            imageRef.delete().catch((error) => {
-              setDisabled(false);
-              Alert.alert('Image Delete Failed', error);
-            });
+            // check image url not empty
+            if (imageUrl) {
+              let imageRef = firebase.storage().refFromURL(imageUrl);
+              imageRef.delete().catch((error) => {
+                setDisabled(false);
+                Alert.alert('Image Delete Failed', error);
+              });
+            }
             // delete the doc
             doc.ref.delete().catch((error) => {
               setDisabled(false);
