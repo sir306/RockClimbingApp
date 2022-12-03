@@ -1,15 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  TextInput,
-  TouchableOpacity,
-  ImageBackground,
-} from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { auth, db } from '../backend/firebase';
-import { useNavigation } from '@react-navigation/native';
+import { Text, View, ImageBackground } from 'react-native';
+import React from 'react';
 import Menu from '../components/Menu';
 import ClimbsList from '../components/ClimbsList';
 

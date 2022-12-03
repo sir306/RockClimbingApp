@@ -6,7 +6,7 @@ import {
   ImageBackground,
   Alert,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { auth, newUser } from '../backend/firebase';
 import { useNavigation } from '@react-navigation/native';
 import * as Progress from 'react-native-progress';

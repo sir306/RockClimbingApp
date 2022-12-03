@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Menu from '../components/Menu';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { db, auth, firebase, userAdmin } from '../backend/firebase';
 import { CheckBox } from '@rneui/themed';
@@ -121,7 +121,7 @@ const AddClimbScreen = ({ route }) => {
         if (!userAdmin(auth.currentUser.uid)) {
           Alert.alert(
             'Climb Succesfully Uploaded',
-            data.climbName + ' has been successfully uploaded!',
+            data.climbName + ' has been successfully uploaded. Pending Approval From Admin, the climb will be visible once approved.',
             [
               {
                 text: 'Ok',

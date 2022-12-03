@@ -1,31 +1,15 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  TextInput,
-  TouchableOpacity,
-  ImageBackground,
-} from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { auth, db } from '../backend/firebase';
-import { useNavigation } from '@react-navigation/native';
+import { Text, View, ImageBackground } from 'react-native';
+import React from 'react';
 import Menu from '../components/Menu';
 import ClimbSiteList from '../components/ClimbSiteList';
 
 const ClimbSitesScreen = () => {
-  // states
-
-  // navigation
-  const navigation = useNavigation();
-
   // background image
   const backgroundImage = require('../assets/background.jpg');
 
   // styles
   const imageStyle = require('../styles/imageStyles');
   const containerStyle = require('../styles/containerStyles');
-  const buttonStyle = require('../styles/buttonStyles');
   const fontStyle = require('../styles/fontStyles');
 
   return (

@@ -13,7 +13,6 @@ const ClimbSiteList = () => {
   const navigation = useNavigation();
 
   // styles
-  const imageStyle = require('../styles/imageStyles');
   const containerStyle = require('../styles/containerStyles');
   const buttonStyle = require('../styles/buttonStyles');
   const generalStyle = require('../styles/generalStyles');

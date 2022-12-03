@@ -3,7 +3,6 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
-  Image,
   TextInput,
   Alert,
   ScrollView,
@@ -119,7 +118,7 @@ const AddClimbSiteScreen = () => {
     let noMatchingDoc = true;
     errMsg = 'Form Error:';
     let checked = false;
-    const climbSiteCol = await db
+    await db
       .collection('climbSites')
       .where('siteName', '==', climbSiteName.trimEnd())
       .limit(1)
@@ -152,6 +151,7 @@ const AddClimbSiteScreen = () => {
         'You have not set a Climb Site Name, a Climb Site Name must be set for a climb site to be uploaded.'
       );
     } else {
+      setUploading(true);
       await validateDataInDB();
     }
     setDisabled(false);
@@ -161,6 +161,7 @@ const AddClimbSiteScreen = () => {
   const sendData = async (noMatchingDoc) => {
     if (!noMatchingDoc) {
       Alert.alert('Climb Site Already Exists', errMsg);
+      setUploading(false);
     } else {
       const climbSiteCol = db.collection('climbSites');
       let approved = await userAdmin(auth.currentUser.uid);
@@ -175,11 +176,16 @@ const AddClimbSiteScreen = () => {
         .add(data)
         .then((docRef) => {
           //// navigate back to climb site list
+          let approveText = approved
+            ? ''
+            : ' Pending Approval From Admin, the climb site will be visible once approved';
+          setUploading(false);
           Alert.alert(
             'Successful Upload',
             'Climb site: ' +
               climbSiteName +
-              ', has been successfully uploaded.',
+              ', has been successfully uploaded.' +
+              approveText,
             [
               {
                 text: 'Ok',
@@ -191,6 +197,7 @@ const AddClimbSiteScreen = () => {
           );
         })
         .catch((error) => {
+          setUploading(false);
           console.log('error occured uploading');
           console.log(JSON.stringify(error));
           Alert.alert('Server Error', JSON.stringify(error));
@@ -206,76 +213,90 @@ const AddClimbSiteScreen = () => {
       >
         <Menu />
         <ScrollView style={containerStyle.scrollStyle}>
-          <Text style={fontStyle.detailTitle}>Add New Climb Site</Text>
-          <View style={containerStyle.innerContainer}>
-            <View style={containerStyle.buttonContainer}>
-              <Text style={fontStyle.detailTitle}>Climb Site Name</Text>
-              <TextInput
-                style={inputStyle.textInput}
-                autoCapitalize='words'
-                placeholder='Enter Climb Site Name..'
-                placeholderTextColor={'white'}
-                value={climbSiteName}
-                onChangeText={(textInput) => setClimbSiteName(textInput)}
+          {uploading ? (
+            <View style={containerStyle.loadingContainer}>
+              <Text style={fontStyle.detailTitle}>Uploading Climb Site</Text>
+              <Progress.CircleSnail
+                size={100}
+                thickness={8}
+                spinDuration={2000}
+                color={['green', 'blue', 'red', 'purple']}
               />
-              <Text style={fontStyle.detailTitle}>Climb Location</Text>
-              <Text style={fontStyle.hintText}>{text}</Text>
-              {!location ? (
-                <>
-                  <View style={containerStyle.loadingContainer}>
-                    <Text style={fontStyle.detailTitle}>{text}</Text>
-                    <Progress.CircleSnail
-                      size={100}
-                      thickness={8}
-                      spinDuration={2000}
-                      color={['green', 'blue', 'red', 'purple']}
-                    />
-                  </View>
-                </>
-              ) : (
-                <>
-                  <MapView
-                    style={mapStyle.mapStyle}
-                    provider={PROVIDER_GOOGLE}
-                    showsUserLocation={true}
-                    region={{
-                      latitude: location.lat,
-                      longitude: location.long,
-                      latitudeDelta: 0.4,
-                      longitudeDelta: 0.5,
-                    }}
-                    onLongPress={(e) => handleLongPress(e)}
-                  >
-                    <Marker
-                      key={1}
-                      draggable={true}
-                      coordinate={{
-                        latitude: location.lat,
-                        longitude: location.long,
-                      }}
-                      onDragEnd={(e) => handleOnDragEnd(e)}
-                    />
-                  </MapView>
-                  <Text style={fontStyle.hintText}>
-                    Hint: If the marker is not on the location of the climb
-                    area, you can move it by holding it down and dragging it or
-                    you can click and hold on the position on the map to place
-                    the marker where you want it.
-                  </Text>
-                </>
-              )}
-
-              <TouchableOpacity
-                disabled={disabled}
-                style={buttonStyle.buttonInput}
-                onPress={() => handleSubmit()}
-              >
-                <Text style={buttonStyle.buttonText}>
-                  Submit New Climb Site
-                </Text>
-              </TouchableOpacity>
             </View>
-          </View>
+          ) : (
+            <>
+              <Text style={fontStyle.detailTitle}>Add New Climb Site</Text>
+              <View style={containerStyle.innerContainer}>
+                <View style={containerStyle.buttonContainer}>
+                  <Text style={fontStyle.detailTitle}>Climb Site Name</Text>
+                  <TextInput
+                    style={inputStyle.textInput}
+                    autoCapitalize='words'
+                    placeholder='Enter Climb Site Name..'
+                    placeholderTextColor={'white'}
+                    value={climbSiteName}
+                    onChangeText={(textInput) => setClimbSiteName(textInput)}
+                  />
+                  <Text style={fontStyle.detailTitle}>Climb Location</Text>
+                  <Text style={fontStyle.hintText}>{text}</Text>
+                  {!location ? (
+                    <>
+                      <View style={containerStyle.loadingContainer}>
+                        <Text style={fontStyle.detailTitle}>{text}</Text>
+                        <Progress.CircleSnail
+                          size={100}
+                          thickness={8}
+                          spinDuration={2000}
+                          color={['green', 'blue', 'red', 'purple']}
+                        />
+                      </View>
+                    </>
+                  ) : (
+                    <>
+                      <MapView
+                        style={mapStyle.mapStyle}
+                        provider={PROVIDER_GOOGLE}
+                        showsUserLocation={true}
+                        region={{
+                          latitude: location.lat,
+                          longitude: location.long,
+                          latitudeDelta: 0.4,
+                          longitudeDelta: 0.5,
+                        }}
+                        onLongPress={(e) => handleLongPress(e)}
+                      >
+                        <Marker
+                          key={1}
+                          draggable={true}
+                          coordinate={{
+                            latitude: location.lat,
+                            longitude: location.long,
+                          }}
+                          onDragEnd={(e) => handleOnDragEnd(e)}
+                        />
+                      </MapView>
+                      <Text style={fontStyle.hintText}>
+                        Hint: If the marker is not on the location of the climb
+                        area, you can move it by holding it down and dragging it
+                        or you can click and hold on the position on the map to
+                        place the marker where you want it.
+                      </Text>
+                    </>
+                  )}
+
+                  <TouchableOpacity
+                    disabled={disabled}
+                    style={buttonStyle.buttonInput}
+                    onPress={() => handleSubmit()}
+                  >
+                    <Text style={buttonStyle.buttonText}>
+                      Submit New Climb Site
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </>
+          )}
         </ScrollView>
       </ImageBackground>
     </View>
